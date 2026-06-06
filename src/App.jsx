@@ -1,20 +1,16 @@
-import { useState, useEffect } from 'react';
-import Cursor         from './components/Cursor';
-import VideoHome      from './components/VideoHome';
-import RoadmapView    from './components/RoadmapView';
+import { useState, useEffect, useRef } from 'react';
+import Cursor        from './components/Cursor';
 import { ToastProvider } from './components/Toast';
+import HomePage      from './components/HomePage';
+import RoadmapApp    from './components/RoadmapApp';
 import { analyzeResume } from './utils/resumeParser';
 
 export default function App() {
   const [analysis, setAnalysis] = useState(null);
 
-  useEffect(() => {
-    document.documentElement.style.background = '#080808';
-  }, []);
-
   const handleAnalyze = text => {
-    const result = analyzeResume(text);
-    setAnalysis(result);
+    const r = analyzeResume(text);
+    setAnalysis(r);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -23,8 +19,8 @@ export default function App() {
       <Cursor />
       <ToastProvider />
       {!analysis
-        ? <VideoHome onAnalyze={handleAnalyze} />
-        : <RoadmapView analysis={analysis} onReset={() => { setAnalysis(null); window.scrollTo({top:0,behavior:'smooth'}); }} />
+        ? <HomePage   onAnalyze={handleAnalyze} />
+        : <RoadmapApp analysis={analysis} onReset={() => setAnalysis(null)} />
       }
     </>
   );

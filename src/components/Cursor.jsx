@@ -1,39 +1,48 @@
 import { useEffect, useRef } from 'react';
 
 export default function Cursor() {
-  const dot   = useRef(null);
-  const ring  = useRef(null);
-  const pos   = useRef({ x: -200, y: -200 });
-  const ringl = useRef({ x: -200, y: -200 });
-  const raf   = useRef(null);
+  const dot  = useRef(null);
+  const ring = useRef(null);
+  const pos  = useRef({ x: -200, y: -200 });
+  const lag  = useRef({ x: -200, y: -200 });
+  const vel  = useRef({ x: 0, y: 0 });
+  const prev = useRef({ x: -200, y: -200 });
+  const raf  = useRef(null);
   const trails = useRef([]);
 
   useEffect(() => {
-    // Build 10 trail elements
-    const els = Array.from({ length: 10 }, (_, i) => {
+    // Build 12 velocity-colored trail dots
+    const els = Array.from({ length: 12 }, (_, i) => {
       const d = document.createElement('div');
-      d.className = 'cursor-trail';
-      const r = i / 10;
+      d.className = 'c-trail';
+      const r = i / 12;
       const sz = 5 - r * 3.5;
-      d.style.cssText = `width:${sz}px;height:${sz}px;background:rgba(200,255,0,${0.55 - r * 0.5});z-index:${99990 - i}`;
+      d.style.cssText = `width:${sz}px;height:${sz}px;z-index:${99990 - i};` +
+        `background:rgba(0,${Math.floor(255 - r * 80)},${Math.floor(209 - r * 120)},${0.6 - r * 0.5})`;
       document.body.appendChild(d);
       return { el: d, x: -200, y: -200 };
     });
     trails.current = els;
 
-    const onMove = e => { pos.current = { x: e.clientX, y: e.clientY }; };
+    const onMove = e => {
+      vel.current.x = e.clientX - prev.current.x;
+      vel.current.y = e.clientY - prev.current.y;
+      prev.current  = { x: e.clientX, y: e.clientY };
+      pos.current   = { x: e.clientX, y: e.clientY };
+    };
 
     const onOver = e => {
       const t = e.target;
-      const isHot = t.tagName === 'BUTTON' || t.tagName === 'A' ||
-        t.closest('.mag-btn') || t.closest('.phase-tile') ||
-        t.closest('[data-cursor="hot"]') || t.closest('.pill-nav');
-      const isText = t.closest('[data-cursor="text"]');
-      if (ring.current) {
-        ring.current.className = isText ? 'hot text' : isHot ? 'hot' : '';
-        ring.current.id = 'cursor-ring';
-        ring.current.className = 'cursor-ring' + (isText ? ' text' : isHot ? ' hot' : '');
-      }
+      const isLink = t.tagName === 'A' || t.tagName === 'BUTTON' || t.closest('a,button,[data-cursor="link"]');
+      const isHot  = t.closest('[data-cursor="hot"]') || t.closest('.h-card') || t.closest('.topic-row') || t.closest('.mag-btn');
+      if (!ring.current) return;
+      ring.current.className = isLink ? 'link' : isHot ? 'hot' : '';
+      ring.current.id = 'c-ring';
+      ring.current.className = (isLink ? 'link ' : isHot ? 'hot ' : '') + '';
+      // re-apply id after className wipe
+      ring.current.setAttribute('id', 'c-ring');
+      if (isLink)     ring.current.classList.add('link');
+      else if (isHot) ring.current.classList.add('hot');
     };
 
     window.addEventListener('mousemove', onMove);
@@ -44,20 +53,18 @@ export default function Cursor() {
       if (dot.current) {
         dot.current.style.transform = `translate(${pos.current.x - 4}px,${pos.current.y - 4}px)`;
       }
-      // Ease ring
-      ringl.current.x += (pos.current.x - ringl.current.x) * 0.095;
-      ringl.current.y += (pos.current.y - ringl.current.y) * 0.095;
+      lag.current.x += (pos.current.x - lag.current.x) * 0.1;
+      lag.current.y += (pos.current.y - lag.current.y) * 0.1;
       if (ring.current) {
-        ring.current.style.transform = `translate(${ringl.current.x - 18}px,${ringl.current.y - 18}px)`;
+        ring.current.style.transform = `translate(${lag.current.x - 19}px,${lag.current.y - 19}px)`;
       }
-      // Chain trail
       let px = pos.current.x, py = pos.current.y;
       trails.current.forEach((t, i) => {
-        const ease = 0.24 - i * 0.015;
-        t.x += (px - t.x) * ease;
-        t.y += (py - t.y) * ease;
+        const e = 0.26 - i * 0.015;
+        t.x += (px - t.x) * e;
+        t.y += (py - t.y) * e;
         t.el.style.transform = `translate(${t.x - 2.5}px,${t.y - 2.5}px)`;
-        t.el.style.opacity = String(0.7 - i / 10);
+        t.el.style.opacity = String(0.7 - i / 12);
         px = t.x; py = t.y;
       });
     };
@@ -73,8 +80,8 @@ export default function Cursor() {
 
   return (
     <>
-      <div id="cursor-dot"  ref={dot}  />
-      <div id="cursor-ring" ref={ring} />
+      <div id="c-dot"  ref={dot}  />
+      <div id="c-ring" ref={ring} />
     </>
   );
 }
