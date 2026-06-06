@@ -1,0 +1,240 @@
+/* ================================================================
+   DEVOPSPATH — Global Design System
+   Inspired by Active Theory: pitch-black, WebGL-first, kinetic type
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,300;1,9..40,400&family=DM+Mono:wght@300;400;500&display=swap');
+
+/* ── Tokens ──────────────────────────────────────────────────── */
+:root {
+  /* Canvas */
+  --black:   #080808;
+  --black2:  #0e0e0e;
+  --black3:  #141414;
+
+  /* Accent palette — restrained, purposeful */
+  --acid:    #c8ff00;   /* PRIMARY — lime acid green (progress, CTA, known) */
+  --violet:  #a970ff;   /* SECONDARY — violet (active states, hover) */
+  --ember:   #ff4500;   /* TERTIARY — ember (warnings, high priority) */
+  --ice:     #00d4ff;   /* INFO — ice blue (data, timeline) */
+  --ghost:   rgba(255,255,255,0.06);
+  --ghost2:  rgba(255,255,255,0.10);
+  --ghost3:  rgba(255,255,255,0.18);
+  --ghost4:  rgba(255,255,255,0.35);
+  --ghost5:  rgba(255,255,255,0.60);
+  --ghost6:  rgba(255,255,255,0.85);
+
+  /* Type */
+  --font-d:  'DM Sans', system-ui, sans-serif;
+  --font-m:  'DM Mono', monospace;
+
+  /* Layout */
+  --max:     1440px;
+  --gutter:  64px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:  cubic-bezier(0.4, 0, 1, 1);
+  --ease:     cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Reset ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-d);
+  background: var(--black);
+  color: rgba(255,255,255,0.85);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* No cursor — handled by JS */
+*, html { cursor: none !important; }
+
+/* Selection */
+::selection { background: var(--acid); color: #000; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--acid); }
+
+/* ── Desktop guard ───────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  #root > * { display: none !important; }
+  body::after {
+    content: 'DevOpsPath is designed for desktop. Please open on a laptop or wider screen.';
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 40px;
+    font-family: var(--font-m); font-size: 13px; letter-spacing: 0.1em;
+    color: var(--ghost4); background: var(--black);
+    line-height: 1.8;
+  }
+}
+
+/* ── Noise overlay ───────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.80' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.036; pointer-events: none; mix-blend-mode: overlay;
+}
+
+/* ── Keyframes ───────────────────────────────────────────────── */
+@keyframes fadeUp   { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:none; } }
+@keyframes fadeIn   { from { opacity:0; }  to { opacity:1; } }
+@keyframes slideLeft{ from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:none; } }
+@keyframes charUp   { from { transform:translateY(105%); } to { transform:none; } }
+@keyframes spin     { to   { transform:rotate(360deg); } }
+@keyframes flicker  { 0%,100%{opacity:1}92%{opacity:1}93%{opacity:0.3}94%{opacity:1}97%{opacity:0.6}98%{opacity:1} }
+@keyframes ripple   { to { transform:scale(5); opacity:0; } }
+@keyframes marquee  { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+@keyframes pulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.5} }
+@keyframes progressFill { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+@keyframes scanLine { from { top:-2px; } to { top:100%; } }
+@keyframes toastIn  { from { opacity:0; transform:translateX(16px); } to { opacity:1; transform:none; } }
+@keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+@keyframes glowPulse{ 0%,100%{box-shadow:0 0 0 0 rgba(200,255,0,0)} 50%{box-shadow:0 0 0 8px rgba(200,255,0,0)} }
+@keyframes numberUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+@keyframes termLine { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:none} }
+
+/* ── Utility animations ──────────────────────────────────────── */
+.au  { animation: fadeUp    0.75s var(--ease-out) both; }
+.af  { animation: fadeIn    0.45s ease both; }
+.asl { animation: slideLeft 0.65s var(--ease-out) both; }
+
+/* ── Custom cursor ───────────────────────────────────────────── */
+#cursor-dot, #cursor-ring { position:fixed; top:0; left:0; pointer-events:none; z-index:99999; will-change:transform; }
+#cursor-dot  { width:8px; height:8px; background:#fff; border-radius:50%; mix-blend-mode:difference; transform:translate(-50%,-50%); }
+#cursor-ring { width:36px; height:36px; border:1px solid rgba(255,255,255,0.5); border-radius:50%; transform:translate(-50%,-50%); transition:width .28s var(--ease-out),height .28s var(--ease-out),border-color .2s,background .2s; display:flex; align-items:center; justify-content:center; }
+#cursor-ring.hot { width:56px; height:56px; border-color:var(--acid); }
+#cursor-ring.text{ width:72px; height:72px; border-color:var(--violet); background:rgba(169,112,255,0.08); }
+.cursor-trail { position:fixed; top:0; left:0; border-radius:50%; pointer-events:none; z-index:99998; will-change:transform; transform:translate(-50%,-50%); }
+
+/* ── Typography helpers ──────────────────────────────────────── */
+.char-wrap  { display:inline-block; overflow:hidden; vertical-align:top; }
+.char-inner { display:inline-block; animation:charUp 0.85s var(--ease-out) both; }
+.mono { font-family:var(--font-m); }
+.label{ font-family:var(--font-m); font-size:10px; letter-spacing:0.18em; text-transform:uppercase; }
+
+/* ── Pill nav (Active Theory scroll-velocity style) ──────────── */
+.pill-nav {
+  display:flex; align-items:center; gap:2px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.09);
+  border-radius:999px; padding:5px;
+  backdrop-filter:blur(24px);
+  transition:transform 0.15s;
+}
+.pill-nav button {
+  font-family:var(--font-m); font-size:10px; letter-spacing:0.14em;
+  color:var(--ghost4); background:transparent; border:none;
+  border-radius:999px; padding:8px 18px;
+  transition:background 0.2s,color 0.2s;
+  position:relative;
+}
+.pill-nav button.active {
+  background:var(--acid); color:#000; font-weight:600;
+}
+.pill-nav button sup {
+  font-size:7px; position:absolute; top:6px; right:10px;
+  color:var(--ghost3); font-family:var(--font-m);
+}
+
+/* ── Phase tile (hover bloom — Active Theory rack-focus) ─────── */
+.phase-tile {
+  border:1px solid rgba(255,255,255,0.07);
+  transition:border-color 0.35s var(--ease-out), opacity 0.35s, transform 0.35s var(--ease-out), background 0.35s;
+  cursor:pointer; position:relative; overflow:hidden;
+}
+.phase-tile::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(200,255,0,0.06), transparent 65%);
+  opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:0;
+}
+.phase-tile:hover::before { opacity:1; }
+.phase-tile.neighbor { opacity:0.45; transform:scale(0.985); }
+.phase-tile.expanded { border-color:rgba(200,255,0,0.3); background:rgba(200,255,0,0.03); }
+
+/* ── Magnetic button ─────────────────────────────────────────── */
+.mag-btn {
+  position:relative; display:inline-flex; align-items:center; gap:10px;
+  padding:14px 36px; border:1px solid var(--ghost3); border-radius:0;
+  font-family:var(--font-m); font-size:10px; letter-spacing:0.18em;
+  color:var(--ghost5); background:transparent; overflow:hidden;
+  transition:color 0.3s,border-color 0.3s; will-change:transform;
+}
+.mag-btn::before {
+  content:''; position:absolute; inset:0;
+  background:var(--acid); transform:scaleX(0); transform-origin:left;
+  transition:transform 0.42s var(--ease-out);
+}
+.mag-btn:hover::before { transform:scaleX(1); }
+.mag-btn:hover { color:#000; border-color:var(--acid); }
+.mag-btn > * { position:relative; z-index:1; }
+
+/* ── Progress ring (SVG) ─────────────────────────────────────── */
+.progress-ring { transform:rotate(-90deg); }
+.progress-ring-track { fill:none; stroke:rgba(255,255,255,0.08); }
+.progress-ring-fill  { fill:none; stroke:var(--acid); stroke-linecap:round; transition:stroke-dashoffset 1.2s var(--ease-out); filter:drop-shadow(0 0 4px var(--acid)); }
+
+/* ── Bar fill ────────────────────────────────────────────────── */
+.bar { height:2px; background:rgba(255,255,255,0.07); overflow:hidden; border-radius:1px; }
+.bar-fill { height:100%; border-radius:1px; transform-origin:left; animation:progressFill 1.4s var(--ease-out) both; }
+
+/* ── Scan line effect ────────────────────────────────────────── */
+.scan-line {
+  position:absolute; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,255,0,0.4),transparent);
+  animation:scanLine 4s linear infinite; pointer-events:none;
+}
+
+/* ── Ripple ──────────────────────────────────────────────────── */
+.ripple { position:absolute; border-radius:50%; background:rgba(200,255,0,0.2); pointer-events:none; animation:ripple 0.7s ease forwards; }
+
+/* ── Toast ───────────────────────────────────────────────────── */
+.toast {
+  padding:12px 20px; background:rgba(14,14,14,0.95);
+  border:1px solid; backdrop-filter:blur(20px);
+  font-family:var(--font-m); font-size:11px; letter-spacing:0.06em;
+  color:rgba(255,255,255,0.8); border-radius:2px;
+  animation:toastIn 0.35s var(--ease-out) both;
+}
+.toast.success { border-color:rgba(200,255,0,0.35); }
+.toast.info    { border-color:rgba(0,212,255,0.35); }
+.toast.warn    { border-color:rgba(255,165,0,0.35); }
+.toast.error   { border-color:rgba(255,69,0,0.4); }
+
+/* ── Scrollbar slim ──────────────────────────────────────────── */
+.slim-scroll { scrollbar-width:thin; scrollbar-color:rgba(200,255,0,0.3) transparent; }
+.slim-scroll::-webkit-scrollbar { width:2px; height:2px; }
+.slim-scroll::-webkit-scrollbar-thumb { background:rgba(200,255,0,0.3); }
+
+/* ── Horizontal drag scroll ──────────────────────────────────── */
+.drag-scroll { overflow-x:auto; scrollbar-width:none; user-select:none; }
+.drag-scroll::-webkit-scrollbar { display:none; }
+
+/* ── Phase status colors ─────────────────────────────────────── */
+.status-known   { color:var(--acid); }
+.status-partial { color:var(--ice); }
+.status-todo    { color:var(--ghost3); }
+
+/* ── Terminal ────────────────────────────────────────────────── */
+.term-body { font-family:var(--font-m); font-size:12px; line-height:1.9; }
+.term-prompt { color:var(--ghost4); }
+.term-cmd    { color:rgba(255,255,255,0.78); }
+.term-ok     { color:var(--acid); }
+.term-info   { color:var(--ice); }
+.term-warn   { color:var(--ice); opacity:0.7; }
+.term-line   { display:block; animation:termLine 0.22s var(--ease-out) both; }
+.term-cursor { display:inline-block; width:7px; height:14px; background:rgba(255,255,255,0.55); vertical-align:middle; animation:flicker 3s steps(1) infinite; }
+
+/* ── Keyboard hint ───────────────────────────────────────────── */
+kbd {
+  font-family:var(--font-m); font-size:9px; letter-spacing:0.06em;
+  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.14);
+  border-radius:3px; padding:2px 6px; color:var(--ghost4);
+}

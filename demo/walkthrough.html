@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>⚡ DevOpsPath — Video Walkthrough</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080c14;--bg2:#0d1117;--bg3:#161b22;--surface:rgba(255,255,255,.04);--border:rgba(255,255,255,.08);--text:#e6edf3;--text2:#8b949e;--text3:#6e7681;--accent:#6366f1;--cyan:#06b6d4;--green:#3fb950;--yellow:#d29922;--red:#f85149;--pink:#ec4899;--font:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 10px rgba(99,102,241,.3)}50%{box-shadow:0 0 30px rgba(99,102,241,.7)}}
+@keyframes progress{from{width:0}}
+@keyframes countUp{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+@keyframes typewriter{from{width:0}to{width:100%}}
+@keyframes blink{50%{opacity:0}}
+@keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes borderPulse{0%,100%{border-color:rgba(99,102,241,.3)}50%{border-color:rgba(99,102,241,.9),box-shadow:0 0 20px rgba(99,102,241,.5)}}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;display:flex;align-items:center;gap:20px;padding:14px 36px;background:rgba(8,12,20,.95);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:900;letter-spacing:-.5px;text-decoration:none;color:var(--text)}
+.logo-accent{color:var(--accent)}
+.wt-badge{background:rgba(248,81,73,.15);border:1px solid rgba(248,81,73,.35);color:#f85149;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700}
+.back-btn{margin-left:auto;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.4);color:#a5b4fc;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}
+
+/* ── LAYOUT ── */
+main{max-width:1100px;margin:0 auto;padding:100px 24px 80px}
+.page-title{text-align:center;margin-bottom:60px}
+.title-badge{display:inline-block;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.35);color:#a5b4fc;border-radius:30px;padding:8px 22px;font-size:13px;font-weight:600;margin-bottom:24px}
+h1{font-size:clamp(28px,5vw,52px);font-weight:900;margin-bottom:16px;letter-spacing:-1px}
+.grad{background:linear-gradient(135deg,var(--accent),var(--cyan),var(--pink));background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradShift 4s ease infinite}
+.page-sub{font-size:17px;color:var(--text2);line-height:1.7;max-width:600px;margin:0 auto}
+
+/* ── PROGRESS BAR ── */
+.progress-track{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:14px 24px;margin-bottom:60px}
+.step-dots{display:flex;gap:8px;flex:1;overflow:hidden}
+.step-dot{width:12px;height:12px;border-radius:50%;background:var(--bg3);border:2px solid var(--border);flex-shrink:0;transition:all .4s;cursor:pointer}
+.step-dot.done{background:var(--green);border-color:var(--green);box-shadow:0 0 8px var(--green)}
+.step-dot.active{background:var(--accent);border-color:var(--accent);box-shadow:0 0 12px var(--accent);animation:glow 1.5s infinite}
+.step-label{font-size:13px;color:var(--text2);font-weight:600;white-space:nowrap}
+
+/* ── SCENE CARD ── */
+.scene{display:none;animation:fadeIn .4s ease}
+.scene.active{display:block}
+.scene-wrapper{display:grid;grid-template-columns:1fr 420px;gap:36px;align-items:start;margin-bottom:48px}
+.scene-info{position:sticky;top:100px}
+.scene-num{font-size:11px;color:var(--accent);font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.scene-num::before{content:'';width:30px;height:2px;background:var(--accent);display:inline-block}
+.scene-title{font-size:clamp(22px,3vw,32px);font-weight:900;color:var(--text);margin-bottom:14px;line-height:1.2}
+.scene-body{font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:24px}
+.feature-list{display:flex;flex-direction:column;gap:10px}
+.feature-item{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+.feature-item-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.feature-item-text{font-size:13px;color:var(--text2);line-height:1.5}
+.feature-item-text strong{color:var(--text);display:block;font-size:14px;margin-bottom:2px}
+
+/* ── MOCKUP ── */
+.mockup{background:var(--bg2);border-radius:20px;border:1px solid var(--border);overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px rgba(99,102,241,.15)}
+.mockup-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.m-dot{width:12px;height:12px;border-radius:50%}
+.m-url{flex:1;background:var(--bg2);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--text3);font-family:var(--mono);margin-left:8px}
+.mockup-body{padding:0}
+
+/* Screen mockups */
+.m-upload{padding:32px 24px;text-align:center}
+.m-title{font-size:24px;font-weight:900;margin-bottom:10px}
+.m-sub{font-size:12px;color:var(--text3);margin-bottom:20px}
+.m-drop{border:2px dashed rgba(99,102,241,.4);border-radius:14px;padding:30px;text-align:center;background:rgba(99,102,241,.05);animation:borderPulse 2s infinite}
+.m-upload-icon{font-size:32px;margin-bottom:8px;animation:float 3s ease-in-out infinite}
+.m-drop-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.m-cta{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;border:none;border-radius:10px;padding:10px 22px;font-size:13px;font-weight:700;margin-top:12px;cursor:pointer}
+.m-stats{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.m-stat{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:8px 14px;text-align:center;min-width:70px}
+.m-stat-val{font-size:18px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.m-stat-lbl{font-size:9px;color:var(--text3)}
+
+/* Terminal mock */
+.m-terminal{background:#0d1117;border-radius:0}
+.m-tbar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#161b22;border-bottom:1px solid var(--border)}
+.m-tbody{padding:16px 20px;min-height:220px}
+.t-line{font-size:11px;color:var(--text);font-family:var(--mono);margin-bottom:6px;opacity:0;animation:slideUp .2s ease forwards}
+.t-green{color:var(--green)}
+
+/* Profile mock */
+.m-profile{padding:20px}
+.m-avatar{width:50px;height:50px;border-radius:50%;background:rgba(99,102,241,.2);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900}
+.m-xp-bar{height:6px;border-radius:99px;background:var(--bg3);overflow:hidden;margin:8px 0}
+.m-xp-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--cyan));animation:progress 1.5s ease forwards}
+
+/* Radar mock */
+.m-radar{padding:16px;display:flex;flex-direction:column;align-items:center}
+
+/* Phase mock */
+.m-phase{border-left:4px solid var(--accent);border-radius:14px;padding:16px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2);margin:12px;margin-left:12px}
+
+/* Timeline mock */
+.m-timeline{padding:16px}
+.m-tl-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.m-tl-icon{font-size:16px;width:24px;flex-shrink:0}
+.m-tl-bar{height:22px;border-radius:6px;display:flex;align-items:center;padding:0 10px;font-size:10px;font-weight:600;color:rgba(255,255,255,.9);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* History mock */
+.m-sess{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:12px;margin:8px 12px}
+.m-sess-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;flex-shrink:0}
+.m-db-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;margin-bottom:4px}
+.m-db-item{background:rgba(99,102,241,.05);border:1px solid rgba(99,102,241,.15);border-radius:10px;padding:10px 12px}
+.m-db-lbl{font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.m-db-val{font-size:12px;color:var(--text);font-weight:700}
+
+/* Notes mock */
+.m-note-area{margin:12px;background:var(--bg2);border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:12px;font-size:11px;font-family:var(--mono);color:var(--text2);line-height:1.7;min-height:90px}
+
+/* ── NAV CONTROLS ── */
+.scene-nav{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:48px}
+.nav-btn{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.4);color:#a5b4fc;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;font-family:var(--font)}
+.nav-btn:hover{background:rgba(99,102,241,.3);transform:translateY(-2px)}
+.nav-btn.primary{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;box-shadow:0 8px 20px rgba(99,102,241,.4);border-color:transparent}
+.nav-btn:disabled{opacity:.3;cursor:default;transform:none}
+.scene-counter{font-size:14px;color:var(--text3);font-family:var(--mono)}
+
+/* ── FEATURE SUMMARY ── */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:60px}
+.summary-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;padding:24px;transition:transform .2s,box-shadow .2s}
+.summary-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.3)}
+
+/* RESPONSIVE */
+@media(max-width:760px){.scene-wrapper{grid-template-columns:1fr}.scene-info{position:static}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><span style="filter:drop-shadow(0 0 8px var(--accent))">⚡</span>DevOps<span class="logo-accent">Path</span></a>
+  <span class="wt-badge">🎬 Video Walkthrough</span>
+  <a href="index.html" class="back-btn">← Try Live Demo</a>
+</nav>
+
+<main>
+  <!-- ── PAGE TITLE ── -->
+  <div class="page-title">
+    <div class="title-badge">🎬 Animated Feature Walkthrough</div>
+    <h1>See <span class="grad">Every Feature</span><br>In Action</h1>
+    <p class="page-sub">A step-by-step visual tour of DevOpsPath — the most innovative Cloud & DevOps roadmap tool ever built</p>
+  </div>
+
+  <!-- ── PROGRESS TRACKER ── -->
+  <div class="progress-track">
+    <div class="step-dots" id="step-dots"></div>
+    <div class="step-label" id="step-label">Scene 1 of 8</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+    SCENE 1 — UPLOAD SCREEN
+  ═══════════════════════════════════════ -->
+  <div class="scene active" id="scene-0">
+    <div class="scene-wrapper">
+      <div class="scene-info">
+        <div class="scene-num">Scene 01</div>
+        <h2 class="scene-title">Drag & Drop Your Resume PDF</h2>
+        <p class="scene-body">The landing page greets you with an interactive particle system — 60 glowing DevOps symbols (λ, ⚡, ☁, ⬡) floating with mouse repulsion and neural network connections.<br><br>Drop your PDF and the browser extracts text using <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:13px;font-family:var(--mono);color:var(--cyan)">pdfjs-dist</code> — zero servers, zero uploads, 100% private.</p>
+        <div class="feature-list">
+          <div class="feature-item"><span class="feature-item-icon">🌌</span><div class="feature-item-text"><strong>Interactive Particle Canvas</strong>WebGL-style particles with mouse repulsion & neural-net connections</div></div>
+          <div class="feature-item"><span class="feature-item-icon">⌨️</span><div class="feature-item-text"><strong>Typewriter Headline</strong>Animated character-by-character title reveal on page load</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🔒</span><div class="feature-item-text"><strong>100% Private</strong>PDF is parsed locally in-browser. No data ever leaves your device.</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🏷️</span><div class="feature-item-text"><strong>Scrolling Tech Ticker</strong>Infinite marquee of 22 DevOps technologies</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="mockup">
+          <div class="mockup-bar">
+            <span class="m-dot" style="background:#f85149"></span><span class="m-dot" style="background:#d29922"></span><span class="m-dot" style="background:#3fb950"></span>
+            <div class="m-url">devopspath.github.io/cloud-devops-roadmap/</div>
+          </div>
+          <div class="mockup-body">
+            <!-- Nav -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(8,12,20,.9);border-bottom:1px solid var(--border)">
+              <span style="font-size:14px;font-weight:900">⚡DevOps<span style="color:var(--accent)">Path</span></span>
+              <div style="display:flex;align-items:center;gap:6px;background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3);border-radius:20px;padding:4px 10px">
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:block;animation:pulse 1.5s infinite"></span>
+                <span style="font-size:10px;color:var(--green);font-weight:700">Interactive Demo</span>
+              </div>
+            </div>
+            <div class="m-upload">
+              <!-- Stats -->
+              <div style="display:inline-block;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);color:#a5b4fc;border-radius:20px;padding:5px 14px;font-size:10px;font-weight:600;margin-bottom:16px;animation:glow 3s infinite">🤖 AI-Powered • 100% Private • Zero Servers</div>
+              <div class="m-title" style="background:linear-gradient(135deg,var(--accent),var(--cyan),var(--pink));background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradShift 4s ease infinite;font-size:18px">Cloud & DevOps Roadmap</div>
+              <div class="m-stats">
+                <div class="m-stat"><div class="m-stat-val">8</div><div class="m-stat-lbl">Phases</div></div>
+                <div class="m-stat"><div class="m-stat-val">15+</div><div class="m-stat-lbl">Topics</div></div>
+                <div class="m-stat"><div class="m-stat-val">100+</div><div class="m-stat-lbl">Resources</div></div>
+                <div class="m-stat"><div class="m-stat-val">0</div><div class="m-stat-lbl">API Keys</div></div>
+              </div>
+              <div class="m-drop">
+                <div class="m-upload-icon">📄</div>
+                <div class="m-drop-title" style="font-size:13px">Drop your resume PDF here</div>
+                <div style="font-size:10px;color:var(--text3);margin-bottom:12px">PDF parsed 100% in browser • nothing leaves your device</div>
+                <button class="m-cta">Choose PDF File →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+    SCENE 2 — TERMINAL LOADER
+  ═══════════════════════════════════════ -->
+  <div class="scene" id="scene-1">
+    <div class="scene-wrapper">
+      <div class="scene-info">
+        <div class="scene-num">Scene 02</div>
+        <h2 class="scene-title">Cinematic Terminal Analysis</h2>
+        <p class="scene-body">After PDF upload, a macOS-style terminal window opens with a live hacker-style analysis animation. Each line appears with typewriter timing, showing exactly what the parser is doing — making the wait feel like a feature, not a delay.</p>
+        <div class="feature-list">
+          <div class="feature-item"><span class="feature-item-icon">🖥️</span><div class="feature-item-text"><strong>Hacker Terminal UI</strong>macOS window chrome with colored dots, monospace font, green success lines</div></div>
+          <div class="feature-item"><span class="feature-item-icon">⏱️</span><div class="feature-item-text"><strong>Staggered Line Reveals</strong>Each analysis step appears at calibrated intervals (250-400ms)</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🗄️</span><div class="feature-item-text"><strong>IndexedDB Save Confirmation</strong>Terminal confirms session saved locally before closing</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🔍</span><div class="feature-item-text"><strong>Transparent Analysis</strong>Users see exactly which skills were detected from their resume</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="mockup">
+          <div class="mockup-bar">
+            <span class="m-dot" style="background:#f85149"></span><span class="m-dot" style="background:#d29922"></span><span class="m-dot" style="background:#3fb950"></span>
+            <div class="m-url">Analyzing resume…</div>
+          </div>
+          <div class="m-terminal">
+            <div class="m-tbar">
+              <span class="m-dot" style="background:#f85149"></span><span class="m-dot" style="background:#d29922"></span><span class="m-dot" style="background:#3fb950"></span>
+              <span style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-left:8px">roadmap-generator — resume.pdf</span>
+            </div>
+            <div class="m-tbody" id="terminal-mock">
+              <div class="t-line" style="animation-delay:.1s">$ analyzing resume...</div>
+              <div class="t-line" style="animation-delay:.3s">> extracting text from PDF</div>
+              <div class="t-line" style="animation-delay:.5s">> detecting experience level [■■■■■■■■□□] 80%</div>
+              <div class="t-line" style="animation-delay:.7s">> scanning skill keywords</div>
+              <div class="t-line" style="animation-delay:.9s;color:var(--cyan)">  found: docker, aws, linux, git, python, kubernetes</div>
+              <div class="t-line" style="animation-delay:1.1s">> mapping to 15 roadmap topics</div>
+              <div class="t-line" style="animation-delay:1.3s">> inferring learning style → 🛠️ hands-on builder</div>
+              <div class="t-line" style="animation-delay:1.5s">> saving session to IndexedDB...</div>
+              <div class="t-line t-green" style="animation-delay:1.7s">  ✓ session #1 saved locally (4.2KB)</div>
+              <div class="t-line" style="animation-delay:1.9s">> generating personalized timeline</div>
+              <div class="t-line" style="animation-delay:2.1s">> computing XP & badge state</div>
+              <div class="t-line t-green" style="animation-delay:2.3s;font-size:13px;font-weight:700;text-shadow:0 0 10px var(--green)">✓ roadmap ready! 🚀</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+    SCENE 3 — PROFILE CARD + RADAR + XP
+  ═══════════════════════════════════════ -->
+  <div class="scene" id="scene-2">
+    <div class="scene-wrapper">
+      <div class="scene-info">
+        <div class="scene-num">Scene 03</div>
+        <h2 class="scene-title">3D Profile Card, Skill Radar & XP System</h2>
+        <p class="scene-body">Your analyzed profile appears with a 3D perspective tilt effect on mouse hover. The animated SVG skill radar shows 10 DevOps dimensions. The XP system levels you from "Script Kiddie" to "DevOps Legend" across 11 levels with 8 unlockable achievement badges.</p>
+        <div class="feature-list">
+          <div class="feature-item"><span class="feature-item-icon">🃏</span><div class="feature-item-text"><strong>3D Tilt Card</strong>CSS perspective transform follows your mouse — feels premium and alive</div></div>
+          <div class="feature-item"><span class="feature-item-icon">📡</span><div class="feature-item-text"><strong>Animated Skill Radar</strong>10-dimension SVG radar with spring fill animation & color-coded vertices</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🎮</span><div class="feature-item-text"><strong>XP & Leveling</strong>Script Kiddie → Shell Ranger → K8s Cadet → DevOps Legend (11 levels)</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🏅</span><div class="feature-item-text"><strong>8 Achievement Badges</strong>Container Lord, K8s Pilot, Cloud Walker, SecOps Ranger & more</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="mockup">
+          <div class="mockup-bar">
+            <span class="m-dot" style="background:#f85149"></span><span class="m-dot" style="background:#d29922"></span><span class="m-dot" style="background:#3fb950"></span>
+            <div class="m-url">Dashboard — Profile</div>
+          </div>
+          <div class="mockup-body">
+            <div style="height:3px;background:linear-gradient(90deg,var(--green),var(--accent),var(--cyan))"></div>
+            <div style="display:grid;grid-template-columns:1fr auto;gap:16px;padding:16px">
+              <!-- Left -->
+              <div>
+                <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+                  <div class="m-avatar">A</div>
+                  <div>
+                    <div style="font-size:16px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Arjun Sharma</div>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">
+                      <span style="font-size:10px;background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.4);padding:2px 8px;border-radius:20px;font-weight:700">Mid Level</span>
+                      <span style="font-size:10px;background:rgba(255,255,255,.06);color:var(--text2);border:1px solid var(--border);padding:2px 8px;border-radius:20px">Backend Dev</span>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
+                  ${[['Domain','🏢 Backend Dev'],['Style','🛠️ Hands-On'],['Education',"🎓 Bachelor's"],['Timeline','📅 ~31 weeks']].map(([l,v])=>`<div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:7px 10px"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">${l}</div><div style="font-size:11px;color:var(--text);font-weight:700">${v}</div></div>`).join('')}
+                </div>
+                <!-- XP mini -->
+                <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:12px">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                    <div style="width:40px;height:40px;border-radius:50%;background:rgba(99,102,241,.15);border:2px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+                      <span style="font-size:16px;font-weight:900;color:var(--accent);line-height:1">5</span>
+                      <span style="font-size:7px;color:var(--text3);letter-spacing:1px">LVL</span>
+                    </div>
+                    <div>
+                      <div style="font-size:13px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Cloud Architect</div>
+                      <div style="font-size:11px;color:var(--text3)">1,200 / 2,000 XP</div>
+                      <div class="m-xp-bar"><div class="m-xp-fill" style="width:60%"></div></div>
+                    </div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px">
+                    ${[['🚀','First Steps',true],['🐳','Container',true],['⎈','K8s',false],['☁️','Cloud',false],['🛡️','SecOps',false],['🏗️','IaC',false],['📊','Observ.',false],['🏆','Legend',false]].map(b=>`<div style="display:flex;flex-direction:column;align-items:center;padding:6px 2px;border-radius:8px;font-size:8px;text-align:center;gap:2px;background:${b[2]?'rgba(99,102,241,.12)':'var(--bg3)'};border:1px solid ${b[2]?'rgba(99,102,241,.35)':'var(--border)'}"><span style="font-size:14px;filter:${b[2]?'none':'grayscale(1)'};opacity:${b[2]?1:.3}">${b[0]}</span><span style="color:${b[2]?'var(--text)':'var(--text3)'}">${b[1]}</span></div>`).join('')}
+                  </div>
+                </div>
+              </div>
+              <!-- Radar -->
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+                <span style="font-size:11px;color:var(--text3);font-weight:700;align-self:flex-start">Skill Radar</span>
+                <svg viewBox="0 0 200 200" width="170" height="170">
+                  ${[1,2,3,4].map(r=>{const rr=r/4*72;const pts=Array.from({length:10},(_,i)=>{const a=i/10*Math.PI*2-Math.PI/2;return `${100+rr*Math.cos(a)},${100+rr*Math.sin(a)}`}).join(' ');return `<polygon points="${pts}" fill="none" stroke="rgba(99,102,241,${r===4?.25:.1})" stroke-width="${r===4?1.5:1}"/>`}).join('')}
+                  ${Array.from({length:10},(_,i)=>{const a=i/10*Math.PI*2-Math.PI/2;return `<line x1="100" y1="100" x2="${100+72*Math.cos(a)}" y2="${100+72*Math.sin(a)}" stroke="rgba(99,102,241,.15)" stroke-width="1"/>`}).join('')}
+                  <defs><linearGradient id="rg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1" stop-opacity=".5"/><stop offset="100%" stop-color="#06b6d4" stop-opacity=".15"/></linearGradient></defs>
+                  ${(()=>{const sc=[.95,.5,.95,.08,.08,.08,.5,.08,.08,.08];const pts=sc.map((s,i)=>{const a=i/10*Math.PI*2-Math.PI/2,d=72*s;return `${100+d*Math.cos(a)},${100+d*Math.sin(a)}`}).join(' ');return `<polygon points="${pts}" fill="url(#rg2)" stroke="#6366f1" stroke-width="2" filter="drop-shadow(0 0 4px #6366f1)"/>`;})()}
+                  ${[.95,.5,.95,.08,.08,.08,.5,.08,.08,.08].map((s,i)=>{const a=i/10*Math.PI*2-Math.PI/2,d=72*s,c=s>.8?'#3fb950':s>.3?'#d29922':'#6366f1';return `<circle cx="${100+d*Math.cos(a)}" cy="${100+d*Math.sin(a)}" r="3.5" fill="${c}" filter="drop-shadow(0 0 3px ${c})"/>`;}).join('')}
+                  ${['Linux','Netw.','Docker','K8s','CI/CD','Terraform','AWS','Monitor','SecOps','SRE'].map((l,i)=>{const a=i/10*Math.PI*2-Math.PI/2,sc=[.95,.5,.95,.08,.08,.08,.5,.08,.08,.08];const c=sc[i]>.8?'#3fb950':sc[i]>.3?'#d29922':'#8b949e';const lx=100+(72+18)*Math.cos(a),ly=100+(72+18)*Math.sin(a);return `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="${c}" font-weight="700" font-family="Inter,sans-serif">${l}</text>`;}).join('')}
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+    SCENE 4 — PHASE ACCORDION
+  ═══════════════════════════════════════ -->
+  <div class="scene" id="scene-3">
+    <div class="scene-wrapper">
+      <div class="scene-info">
+        <div class="scene-num">Scene 04</div>
+        <h2 class="scene-title">8-Phase Collapsible Roadmap</h2>
+        <p class="scene-body">All 8 phases are laid out as animated accordions with circular SVG progress rings, phase status badges, and a "START HERE" beacon on your recommended entry phase. Topics expand into a 5-tab detail view with subtopic checklists, resources, projects, and a live notes editor — all saved to IndexedDB.</p>
+        <div class="feature-list">
+          <div class="feature-item"><span class="feature-item-icon">🎯</span><div class="feature-item-text"><strong>START HERE Beacon</strong>Animated glow badge highlights where to begin based on your resume</div></div>
+          <div class="feature-item"><span class="feature-item-icon">⭕</span><div class="feature-item-text"><strong>SVG Progress Rings</strong>Circular progress indicator per phase with glow effect</div></div>
+          <div class="feature-item"><span class="feature-item-icon">📋</span><div class="feature-item-text"><strong>5-Tab Topic Detail</strong>Your Path • Topics • Resources • Projects • Notes</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🎉</span><div class="feature-item-text"><strong>Confetti on Completion</strong>Physics-based confetti fires when a phase reaches 100%</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="mockup">
+          <div class="mockup-bar"><span class="m-dot" style="background:#f85149"></span><span class="m-dot" style="background:#d29922"></span><span class="m-dot" style="background:#3fb950"></span><div class="m-url">Roadmap — Phase View</div></div>
+          <div class="mockup-body" style="padding:14px">
+            ${[{icon:'🏗️',title:'Phase 1: Foundations',color:'#6366f1',pct:75,start:true,weeks:4},{icon:'🐳',title:'Phase 2: Containers',color:'#0ea5e9',pct:50,weeks:5},{icon:'🔄',title:'Phase 3: CI/CD',color:'#10b981',pct:0,weeks:4}].map(p=>`
+              <div style="border-left:4px solid ${p.color};border-radius:12px;padding:12px;background:linear-gradient(135deg,${p.color}10,${p.color}05);margin-bottom:10px;border:1px solid ${p.color}22">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="width:38px;height:38px;border-radius:10px;background:${p.color}22;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${p.icon}</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px">
+                      <span style="font-size:13px;font-weight:800;color:var(--text)">${p.title}</span>
+                      ${p.start?`<span style="background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.5);color:#a5b4fc;font-size:8px;font-weight:800;padding:2px 7px;border-radius:20px;animation:glow 2s infinite">▶ START</span>`:''}
+                      <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:${p.pct===100?'rgba(63,185,80,.15)':p.pct>0?'rgba(210,153,34,.15)':'rgba(99,102,241,.12)'};color:${p.pct===100?'#3fb950':p.pct>0?'#d29922':'#a5b4fc'};border:1px solid ${p.pct===100?'rgba(63,185,80,.4)':p.pct>0?'rgba(210,153,34,.4)':'rgba(99,102,241,.4)'}">${p.pct===100?'✅ Complete':p.pct>0?'⚡ In Progress':'📖 Not Started'}</span>
+                    </div>
+                    <div class="m-xp-bar" style="margin:4px 0"><div style="height:100%;border-radius:99px;background:${p.color};width:${p.pct}%;transition:width 1s"></div></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+                    <svg viewBox="0 0 44 44" width="36" height="36">
+                      <circle cx="22" cy="22" r="18" fill="none" stroke="var(--bg4)" stroke-width="4"/>
+                      <circle cx="22" cy="22" r="18" fill="none" stroke="${p.color}" stroke-width="4" stroke-linecap="round"
+                        stroke-dasharray="${2*Math.PI*18}" stroke-dashoffset="${2*Math.PI*18*(1-p.pct/100)}" transform="rotate(-90 22 22)"
+                        style="filter:drop-shadow(0 0 3px ${p.color})"/>
+                    </svg>
+                    <span style="font-size:10px;font-weight:700;color:${p.color}">${p.pct}%</span>
+                    <span style="font-size:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text3);padding:2px 7px;border-radius:20px">~${p.weeks}w</span>
+                  </div>
+                </div>
+              </div>`).join('')}
+            <!-- Expanded topic sample -->
+            <div style="background:var(--surface);border:1px solid rgba(99,102,241,.3);border-radius:12px;padding:14px;margin-top:4px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                <div style="width:24px;height:24px;border-radius:6px;background:rgba(63,185,80,.15);color:#3fb950;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">✅</div>
+                <span style="font-size:13px;font-weight:800;color:var(--text)">Linux & Shell Scripting</span>
+              </div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">
+                ${['🎯 Your Path','📋 Topics','🔗 Resources','🛠️ Projects','📝 Notes'].map((t,i)=>`<span style="font-size:10px;background:${i===0?'rgba(99,102,241,.15)':'var(--bg3)'};border:1px solid ${i===0?'var(--accent)':'var(--border)'};color:${i===0?'var(--accent)':'var(--text3)'};border-radius:8px;padding:4px 8px;font-weight:600">${t}</span>`).join('')}
+              </div>
+              <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:10px 12px;font-size:11px;color:var(--text2);line-height:1.6">
+                🛠️ <strong style="color:#10b981">Hands-On Path:</strong> Complete 30 daily terminal challenges using OverTheWire Bandit. Build 1 Bash script daily for automation.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+    SCENE 5 — AI INSIGHTS
+  ═══════════════════════════════════════ -->
+  <div class="scene" id="scene-4">
+    <div class="scene-wrapper">
+      <div class="scene-info">
+        <div class="scene-num">Scene 05</div>
+        <h2 class="scene-title">Live AI Insight Panel</h2>
+        <p class="scene-body">The AI Insights tab streams personalized cards with staggered reveal animations. Each insight is tailored to your domain, experience level, and learning style — shortcutting months of research into actionable 2-line guidance.</p>
+        <div class="feature-list">
+          <div class="feature-item"><span class="feature-item-icon">⚡</span><div class="feature-item-text"><strong>Domain Shortcuts</strong>Backend/Frontend/Data/Security devs each get a unique fast-path</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🎓</span><div class="feature-item-text"><strong>Learning Style Tips</strong>Specific strategies for visual, hands-on, reading, and video learners</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🎯</span><div class="feature-item-text"><strong>Quick Win Detection</strong>Identifies partially-known topics to grab fast XP and momentum</div></div>
+          <div class="feature-item"><span class="feature-item-icon">📡</span><div class="feature-item-text"><strong>LIVE indicator</strong>Pulsing green dot signals real-time dynamic generation</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="mockup">
+          <div class="mockup-bar"><span class="m-dot" style="background:#f85149"></span><span class="m-dot" style="background:#d29922"></span><span class="m-dot" style="background:#3fb950"></span><div class="m-url">AI Insights</div></div>
+          <div class="mockup-body" style="padding:14px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <div style="display:flex;gap:8px;align-items:center">
+                <span style="font-size:20px">🤖</span>
+                <div><div style="font-size:14px;font-weight:800;color:var(--text)">AI Insights</div><div style="font-size:10px;color:var(--text3)">Personalized for your resume</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px;background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3);border-radius:20px;padding:4px 8px">
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:block;animation:pulse 1.5s infinite"></span>
+                <span style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:1px">LIVE</span>
+              </div>
+            </div>
+            ${[{i:'💪',t:'Strong Foundation Detected',b:'You already know 6 topics. You\'re ahead of 80% of beginners. Focus on depth next.',c:'rgba(63,185,80,.1)',bc:'rgba(63,185,80,.3)',ac:'#3fb950'},{i:'⚡',t:'Backend Dev Shortcut',b:'Skip programming basics. Jump: Docker → K8s → CI/CD → Cloud. Your code skills accelerate everything.',c:'rgba(6,182,212,.1)',bc:'rgba(6,182,212,.3)',ac:'#06b6d4'},{i:'🛠️',t:'Hands-On Learner Detected',b:'Resume shows "built", "deployed", "implemented". Use free tier daily. Build before reading docs.',c:'rgba(99,102,241,.1)',bc:'rgba(99,102,241,.3)',ac:'#6366f1'},{i:'🎯',t:'Quick Win: AWS (partial)',b:'Completing AWS adds 150 XP + unlocks Cloud Walker badge. Highest-leverage topic for you right now.',c:'rgba(240,136,62,.1)',bc:'rgba(240,136,62,.3)',ac:'#f0883e'}].map((ins,i)=>`
+              <div style="border-radius:12px;padding:12px 14px;background:${ins.c};border:1px solid ${ins.bc};margin-bottom:8px;animation:slideUp .3s ease;animation-delay:${i*.1}s;animation-fill-mode:both">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+                  <span style="font-size:16px">${ins.i}</span><strong style="font-size:13px;font-weight:700;color:${ins.ac}">${ins.t}</strong>
+                </div>
+                <p style="font-size:11px;color:var(--text2);line-height:1.6;margin:0">${ins.b}</p>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+    SCENE 6 — TIMELINE
+  ═══════════════════════════════════════ -->
+  <div class="scene" id="scene-5">
+    <div class="scene-wrapper">
+      <div class="scene-info">
+        <div class="scene-num">Scene 06</div>
+        <h2 class="scene-title">Interactive Gantt Timeline</h2>
+        <p class="scene-body">The Timeline tab renders a horizontal Gantt-style chart showing all 8 phases plotted across weeks. Hover over any bar to get a glow effect. Status is color-coded — green for complete, yellow for in progress, phase-colored for todo.</p>
+        <div class="feature-list">
+          <div class="feature-item"><span class="feature-item-icon">📅</span><div class="feature-item-text"><strong>Week-by-Week View</strong>Each phase bar width is proportional to estimated weeks</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🎨</span><div class="feature-item-text"><strong>Status Color Coding</strong>Green = done, Yellow = in progress, Phase color = todo</div></div>
+          <div class="feature-item"><span class="feature-item-icon">✨</span><div class="feature-item-text"><strong>Hover Glow Effects</strong>Bars brighten and glow on hover to highlight selection</div></div>
+          <div class="feature-item"><span class="feature-item-icon">📊</span><div class="feature-item-text"><strong>Offset Positioning</strong>Each phase starts where the previous one ends — true Gantt layout</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="mockup">
+          <div class="mockup-bar"><span class="m-dot" style="background:#f85149"></span><span class="m-dot" style="background:#d29922"></span><span class="m-dot" style="background:#3fb950"></span><div class="m-url">Timeline Planner</div></div>
+          <div class="m-timeline">
+            <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:3px">📅 Learning Timeline</div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:14px">Week-by-week Gantt view across all 8 phases</div>
+            ${[{ic:'🏗️',w:4,off:0,pct:75,c:'#6366f1',lbl:'Foundations'},{ic:'🐳',w:5,off:4,pct:50,c:'#0ea5e9',lbl:'Containers'},{ic:'🔄',w:4,off:9,pct:0,c:'#10b981',lbl:'CI/CD'},{ic:'📜',w:4,off:13,pct:0,c:'#f59e0b',lbl:'IaC'},{ic:'☁️',w:8,off:17,pct:25,c:'#8b5cf6',lbl:'Cloud'},{ic:'📊',w:3,off:25,pct:0,c:'#ef4444',lbl:'Monitoring'},{ic:'🔐',w:3,off:28,pct:0,c:'#ec4899',lbl:'DevSecOps'},{ic:'🚀',w:4,off:31,pct:0,c:'#14b8a6',lbl:'SRE'}].map(p=>`
+              <div class="m-tl-row">
+                <div class="m-tl-icon">${p.ic}</div>
+                <div style="min-width:${p.off*12}px;flex:none"></div>
+                <div class="m-tl-bar" style="min-width:${p.w*12}px;background:${p.pct===100?'rgba(63,185,80,.6)':p.pct>0?'rgba(210,153,34,.5)':p.c+'88'};border:1px solid ${p.c}44">${p.lbl} ${p.pct>0?`(${p.pct}%)`:'todo'}</div>
+              </div>`).join('')}
+            <div style="margin-top:12px;font-size:10px;color:var(--text3);display:flex;gap:10px;flex-wrap:wrap">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#3fb950;display:inline-block"></span>Complete</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#d29922;display:inline-block"></span>In Progress</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#6366f1;display:inline-block"></span>To Learn</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+    SCENE 7 — DATABASE / HISTORY
+  ═══════════════════════════════════════ -->
+  <div class="scene" id="scene-6">
+    <div class="scene-wrapper">
+      <div class="scene-info">
+        <div class="scene-num">Scene 07</div>
+        <h2 class="scene-title">Local Database — IndexedDB + localStorage</h2>
+        <p class="scene-body">Every session, note, and checklist is persisted on <strong style="color:var(--text)">your device</strong> using a dual-layer local database — no servers, no cloud, no tracking. The History tab shows all past analyses with XP, level, topic count, and per-session delete controls.</p>
+        <div class="feature-list">
+          <div class="feature-item"><span class="feature-item-icon">🗄️</span><div class="feature-item-text"><strong>IndexedDB</strong>Stores full session history, per-topic notes, and subtopic checklists</div></div>
+          <div class="feature-item"><span class="feature-item-icon">⚡</span><div class="feature-item-text"><strong>localStorage</strong>Fast-access layer for theme, nav tab, viewed phases, XP cache</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🔒</span><div class="feature-item-text"><strong>Zero Servers</strong>No data ever leaves your browser — fully air-gapped privacy</div></div>
+          <div class="feature-item"><span class="feature-item-icon">🗑️</span><div class="feature-item-text"><strong>Full Control</strong>Delete individual sessions or wipe all data with the Danger Zone panel</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="mockup">
+          <div class="mockup-bar"><span class="m-dot" style="background:#f85149"></span><span class="m-dot" style="background:#d29922"></span><span class="m-dot" style="background:#3fb950"></span><div class="m-url">Session History</div></div>
+          <div class="mockup-body">
+            <div class="m-db-row">
+              ${[['🗄️','Storage Type','IndexedDB + localStorage'],['🔒','Data Location','Your browser only'],['🚫','Server Uploads','None — zero'],['📁','Sessions Saved','3']].map(([i,l,v])=>`<div class="m-db-item"><div style="font-size:18px;margin-bottom:4px">${i}</div><div class="m-db-lbl">${l}</div><div class="m-db-val">${v}</div></div>`).join('')}
+            </div>
+            ${[{n:'Arjun Sharma',c:'#6366f1',lv:5,t:'Cloud Architect',tp:6,w:31},{n:'Priya Nair',c:'#10b981',lv:2,t:'Container Pilot',tp:2,w:35},{n:'Rohan Gupta',c:'#ec4899',lv:7,t:'SRE Guardian',tp:11,w:18}].map(s=>`
+              <div class="m-sess">
+                <div style="width:36px;height:36px;border-radius:10px;background:${s.c}22;border:1px solid ${s.c}55;color:${s.c};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;flex-shrink:0">${s.n[0]}</div>
+                <div style="flex:1">
+                  <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px">${s.n}</div>
+                  <div style="display:flex;gap:12px">
+                    <span style="font-size:10px;color:#3fb950;font-weight:900;font-family:var(--mono)">${s.tp} topics</span>
+                    <span style="font-size:10px;color:#d29922;font-weight:900;font-family:var(--mono)">${s.w}w</span>
+                    <span style="font-size:10px;font-weight:900;font-family:var(--mono);color:${s.c}">Lv.${s.lv} ${s.t}</span>
+                  </div>
+                </div>
+                <span style="font-size:14px;cursor:pointer">🗑️</span>
+              </div>`).join('')}
+            <div style="background:rgba(248,81,73,.05);border:1px solid rgba(248,81,73,.25);border-radius:10px;padding:10px 12px;margin:8px 12px;display:flex;justify-content:space-between;align-items:center">
+              <div style="font-size:11px;color:#f85149;font-weight:700">⚠️ Danger Zone — Wipe all data</div>
+              <button style="background:rgba(248,81,73,.15);border:1px solid rgba(248,81,73,.4);color:#f85149;border-radius:7px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">🗑️ Wipe All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+    SCENE 8 — NOTES + EXPORT
+  ═══════════════════════════════════════ -->
+  <div class="scene" id="scene-7">
+    <div class="scene-wrapper">
+      <div class="scene-info">
+        <div class="scene-num">Scene 08</div>
+        <h2 class="scene-title">Topic Notes Editor & Multi-Format Export</h2>
+        <p class="scene-body">Every topic has a Markdown note editor that auto-saves to IndexedDB 800ms after you stop typing — with live preview and a "Saved ✓" confirmation badge. The Export tab lets you download your full personalized roadmap as a GitHub-ready <code style="background:var(--bg3);padding:2px 5px;border-radius:4px;font-size:12px;font-family:var(--mono);color:var(--cyan)">.md</code>, spreadsheet <code style="background:var(--bg3);padding:2px 5px;border-radius:4px;font-size:12px;font-family:var(--mono);color:var(--cyan)">.csv</code>, or raw <code style="background:var(--bg3);padding:2px 5px;border-radius:4px;font-size:12px;font-family:var(--mono);color:var(--cyan)">.json</code>.</p>
+        <div class="feature-list">
+          <div class="feature-item"><span class="feature-item-icon">📝</span><div class="feature-item-text"><strong>Markdown Notes Editor</strong>Per-topic editor with live preview and IndexedDB auto-save (800ms debounce)</div></div>
+          <div class="feature-item"><span class="feature-item-icon">📂</span><div class="feature-item-text"><strong>GitHub-Ready Export</strong>.md file with full roadmap, resources, and projects — push straight to GitHub</div></div>
+          <div class="feature-item"><span class="feature-item-icon">📊</span><div class="feature-item-text"><strong>CSV & JSON Export</strong>Import to Notion, spreadsheets, or parse programmatically</div></div>
+          <div class="feature-item"><span class="feature-item-icon">✅</span><div class="feature-item-text"><strong>Save Confirmation</strong>Animated "Saved to IndexedDB" badge appears & fades after 1.5s</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="mockup">
+          <div class="mockup-bar"><span class="m-dot" style="background:#f85149"></span><span class="m-dot" style="background:#d29922"></span><span class="m-dot" style="background:#3fb950"></span><div class="m-url">Notes + Export</div></div>
+          <div class="mockup-body">
+            <!-- Notes -->
+            <div style="padding:14px 14px 0">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <span style="font-size:12px;font-weight:700;color:var(--text)">📝 My Notes — Kubernetes (K8s)</span>
+                <span style="font-size:10px;color:var(--green);font-weight:700;background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3);border-radius:20px;padding:3px 8px;animation:fadeIn .3s ease">✓ Saved to IndexedDB</span>
+              </div>
+              <div class="m-note-area"># K8s Notes
+
+## Key commands
+`kubectl get pods -A`
+`kubectl describe pod &lt;name&gt;`
+
+## Concepts to remember
+- Control plane = brain
+- etcd = source of truth
+- kubelet runs on nodes</div>
+            </div>
+            <!-- Export -->
+            <div style="padding:14px">
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px">📤 Export Roadmap</div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+                ${[['📝','Markdown','.md GitHub'],['📊','CSV','Spreadsheet'],['{ }','JSON','Raw data'],['🔗','Link','Share']].map(([i,l,d])=>`<div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 6px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;cursor:pointer" onmouseover="this.style.background='rgba(99,102,241,.12)';this.style.borderColor='rgba(99,102,241,.4)'" onmouseout="this.style.background='var(--bg3)';this.style.borderColor='var(--border2)'"><span style="font-size:18px">${i}</span><span style="font-size:10px;font-weight:700;color:var(--text)">${l}</span><span style="font-size:9px;color:var(--text3)">${d}</span></div>`).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NAVIGATION CONTROLS ── -->
+  <div class="scene-nav">
+    <button class="nav-btn" id="btn-prev" onclick="prevScene()" disabled>← Previous</button>
+    <span class="scene-counter" id="scene-counter">1 / 8</span>
+    <button class="nav-btn primary" id="btn-next" onclick="nextScene()">Next →</button>
+  </div>
+
+  <!-- ── FEATURE SUMMARY ── -->
+  <div id="summary-section" style="display:none;animation:fadeIn .5s ease">
+    <div style="text-align:center;margin:60px 0 40px">
+      <h2 style="font-size:36px;font-weight:900;margin-bottom:12px">🎉 That's the Full Tour!</h2>
+      <p style="font-size:17px;color:var(--text2);max-width:600px;margin:0 auto">Every feature you just saw is fully functional in the live app. No mocks, no placeholders — it all runs 100% in your browser.</p>
+    </div>
+    <div class="summary-grid">
+      ${[['🌌','Particle Canvas','Interactive floating DevOps symbols with mouse repulsion & neural-net connections'],['🖥️','Terminal Loader','Cinematic macOS-style hacker terminal animation during PDF analysis'],['📡','Skill Radar','Animated 10-dimension SVG radar chart built from resume parsing'],['🎮','XP System','11 levels · 8 badges · count-up animation · circular progress ring'],['🗄️','Local Database','IndexedDB (history/notes/checklists) + localStorage (state/theme/nav)'],['📝','Notes Editor','Markdown editor per topic, auto-saved 800ms after typing stops'],['📅','Timeline','Gantt-style week planner with hover glow & status color coding'],['🤖','AI Insights','5+ personalized cards streamed with staggered reveal animation'],['📤','Export','GitHub .md, spreadsheet .csv, raw .json — all generated client-side'],['🎉','Confetti','Physics-based confetti fires on phase 100% completion'],['🌙','Dark/Light','Smooth CSS variable theme toggle with spring-animated toggle button'],['🔍','Live Search','Instant filter across 100+ subtopics, keywords, and tool names']].map(([i,t,d])=>`
+        <div class="summary-card">
+          <div style="font-size:28px;margin-bottom:10px">${i}</div>
+          <h3 style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px">${t}</h3>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6">${d}</p>
+        </div>`).join('')}
+    </div>
+    <div style="text-align:center;margin-top:48px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+      <a href="index.html" style="background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;border:none;border-radius:14px;padding:16px 36px;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(99,102,241,.4)">⚡ Try the Live Demo →</a>
+      <a href="https://github.com" target="_blank" style="background:rgba(255,255,255,.06);border:1px solid var(--border2);color:var(--text);border-radius:14px;padding:16px 36px;font-size:16px;font-weight:700;text-decoration:none">⭐ Star on GitHub</a>
+    </div>
+  </div>
+</main>
+
+<script>
+// ── SCENE CONTROLLER ──────────────────────────────────────
+const SCENE_COUNT = 8;
+let currentScene = 0;
+
+const LABELS = [
+  'Upload Screen','Terminal Loader','Profile + Radar + XP',
+  'Phase Accordion','AI Insights','Timeline Gantt',
+  'Local Database','Notes + Export'
+];
+
+// Build dots
+const dotContainer = document.getElementById('step-dots');
+for(let i=0;i<SCENE_COUNT;i++){
+  const d=document.createElement('div');
+  d.className='step-dot'+(i===0?' active':'');
+  d.onclick=()=>goToScene(i);
+  dotContainer.appendChild(d);
+}
+
+function updateUI(){
+  // Scenes
+  document.querySelectorAll('.scene').forEach((s,i)=>s.classList.toggle('active',i===currentScene));
+  // Dots
+  dotContainer.querySelectorAll('.step-dot').forEach((d,i)=>{
+    d.className='step-dot'+(i<currentScene?' done':i===currentScene?' active':'');
+  });
+  // Counter
+  document.getElementById('scene-counter').textContent=`${currentScene+1} / ${SCENE_COUNT}`;
+  document.getElementById('step-label').textContent=`Scene ${currentScene+1}: ${LABELS[currentScene]}`;
+  // Buttons
+  document.getElementById('btn-prev').disabled=currentScene===0;
+  const isLast=currentScene===SCENE_COUNT-1;
+  const nBtn=document.getElementById('btn-next');
+  nBtn.textContent=isLast?'🎉 View Summary →':'Next →';
+  // Summary
+  document.getElementById('summary-section').style.display=isLast?'block':'none';
+}
+
+function nextScene(){
+  if(currentScene<SCENE_COUNT-1){currentScene++;updateUI();window.scrollTo({top:160,behavior:'smooth'});}
+}
+function prevScene(){
+  if(currentScene>0){currentScene--;updateUI();window.scrollTo({top:160,behavior:'smooth'});}
+}
+function goToScene(i){currentScene=i;updateUI();window.scrollTo({top:160,behavior:'smooth'});}
+
+// Keyboard nav
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')nextScene();
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevScene();
+});
+
+updateUI();
+</script>
+</body>
+</html>

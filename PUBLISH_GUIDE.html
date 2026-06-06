@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DevOpsPath — Publish & Deploy Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808; --bg2:#0e0e0e; --bg3:#141414; --bg4:#1a1a1a;
+  --acid:#c8ff00; --violet:#a970ff; --ember:#ff4500; --ice:#00d4ff;
+  --w:#fff; --w80:rgba(255,255,255,.80); --w50:rgba(255,255,255,.50);
+  --w30:rgba(255,255,255,.30); --w15:rgba(255,255,255,.15); --w08:rgba(255,255,255,.08);
+  --fd:'DM Sans',sans-serif; --fm:'DM Mono',monospace;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--w80);font-family:var(--fd);line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.03;pointer-events:none;z-index:9999}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--acid)}
+::selection{background:var(--acid);color:#000}
+
+/* layout */
+.page{max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+/* header */
+.site-header{text-align:center;margin-bottom:72px;padding-top:20px}
+.logo-line{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--acid);box-shadow:0 0 12px var(--acid)}
+.logo-txt{font-family:var(--fm);font-size:11px;letter-spacing:.22em;color:var(--w30)}
+.main-title{font-size:clamp(36px,6vw,72px);font-weight:900;letter-spacing:-.04em;line-height:.9;margin-bottom:18px}
+.main-title .acc{color:var(--acid)}
+.sub-title{font-size:15px;color:var(--w50);max-width:460px;margin:0 auto;line-height:1.7}
+
+/* live url box */
+.url-box{background:var(--bg2);border:1px solid rgba(200,255,0,.3);border-left:4px solid var(--acid);padding:20px 24px;margin-bottom:80px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.url-label{font-family:var(--fm);font-size:9px;letter-spacing:.18em;color:var(--acid);margin-bottom:6px}
+.url-value{font-family:var(--fm);font-size:14px;color:var(--w80);word-break:break-all}
+.url-note{font-family:var(--fm);font-size:9px;color:var(--w30);margin-top:4px;letter-spacing:.08em}
+.copy-btn{flex-shrink:0;padding:10px 20px;background:var(--acid);color:#000;border:none;font-family:var(--fm);font-size:10px;font-weight:600;letter-spacing:.14em;cursor:pointer;border-radius:0;transition:opacity .2s;white-space:nowrap}
+.copy-btn:hover{opacity:.85}
+.copy-btn.done{background:var(--w15);color:var(--acid);border:1px solid var(--acid)}
+
+/* steps */
+.steps-header{margin-bottom:40px}
+.steps-header h2{font-size:32px;font-weight:800;letter-spacing:-.03em;color:var(--w);margin-bottom:8px}
+.steps-header p{font-size:14px;color:var(--w50)}
+
+.step{margin-bottom:2px;position:relative}
+.step-inner{background:var(--bg2);border:1px solid var(--w08);overflow:hidden;transition:border-color .2s}
+.step-inner:hover{border-color:var(--w15)}
+.step-head{display:flex;align-items:flex-start;gap:16px;padding:22px 24px;cursor:pointer;user-select:none}
+.step-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:12px;font-weight:700;letter-spacing:.06em;margin-top:2px}
+.step-num.done{background:var(--acid);color:#000}
+.step-num.active{background:rgba(200,255,0,.15);color:var(--acid);border:1px solid rgba(200,255,0,.4)}
+.step-num.pending{background:var(--bg3);color:var(--w30);border:1px solid var(--w08)}
+.step-info{flex:1}
+.step-title{font-size:17px;font-weight:700;color:var(--w);letter-spacing:-.01em;margin-bottom:4px}
+.step-meta{font-family:var(--fm);font-size:10px;color:var(--w30);letter-spacing:.1em}
+.step-chevron{flex-shrink:0;font-size:11px;color:var(--w30);transition:transform .3s;margin-top:6px}
+.step-chevron.open{transform:rotate(180deg)}
+.step-body{padding:0 24px 24px 76px;display:none}
+.step-body.open{display:block}
+
+/* step body content */
+.step-desc{font-size:14px;color:var(--w50);line-height:1.75;margin-bottom:20px}
+.step-desc strong{color:var(--w80);font-weight:600}
+
+/* terminal blocks */
+.term{background:var(--bg3);border:1px solid var(--w08);border-radius:2px;overflow:hidden;margin-bottom:16px}
+.term-bar{display:flex;align-items:center;gap:7px;padding:9px 14px;background:var(--bg4);border-bottom:1px solid var(--w08)}
+.tdot{width:10px;height:10px;border-radius:50%}
+.term-title{font-family:var(--fm);font-size:9px;color:var(--w30);margin-left:6px;letter-spacing:.08em}
+.term-body{padding:16px 18px;position:relative}
+.term-line{display:block;font-family:var(--fm);font-size:12px;line-height:1.8;white-space:pre-wrap;word-break:break-all}
+.term-line.cmd{color:var(--w80)}
+.term-line.comment{color:var(--w30)}
+.term-line.ok{color:var(--acid)}
+.term-line.info{color:var(--ice)}
+.term-line.warn{color:rgba(255,165,0,.8)}
+.term-copy{position:absolute;top:10px;right:12px;background:var(--bg4);border:1px solid var(--w08);color:var(--w30);font-family:var(--fm);font-size:8px;letter-spacing:.1em;padding:4px 10px;cursor:pointer;transition:all .2s}
+.term-copy:hover{border-color:var(--acid);color:var(--acid)}
+.term-copy.done{border-color:var(--acid);color:var(--acid)}
+
+/* call-out boxes */
+.callout{padding:14px 18px;border-left:3px solid;border-radius:0 2px 2px 0;margin-bottom:16px;font-size:13px;line-height:1.7}
+.callout.tip{background:rgba(200,255,0,.05);border-color:var(--acid);color:rgba(200,255,0,.8)}
+.callout.warn{background:rgba(255,165,0,.05);border-color:rgba(255,165,0,.7);color:rgba(255,165,0,.8)}
+.callout.info{background:rgba(0,212,255,.05);border-color:var(--ice);color:rgba(0,212,255,.8)}
+.callout.danger{background:rgba(255,69,0,.05);border-color:var(--ember);color:rgba(255,120,80,.8)}
+.callout strong{font-weight:700;display:block;margin-bottom:4px;font-family:var(--fm);font-size:9px;letter-spacing:.14em}
+
+/* screenshot mockups */
+.screen-mock{background:var(--bg3);border:1px solid var(--w08);border-radius:3px;margin-bottom:16px;overflow:hidden}
+.screen-bar{display:flex;align-items:center;gap:7px;padding:9px 14px;background:var(--bg4);border-bottom:1px solid var(--w08)}
+.screen-body{padding:20px;font-family:var(--fm);font-size:11px;color:var(--w30);line-height:1.8}
+.screen-highlight{color:var(--acid)}
+.screen-action{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(200,255,0,.06);border:1px solid rgba(200,255,0,.2);border-radius:2px;margin:8px 0}
+.screen-action-arrow{color:var(--acid);font-size:14px}
+.screen-action-text{color:var(--w80);font-size:12px}
+
+/* checklist */
+.checklist{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.checklist li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--w50)}
+.check-box{width:18px;height:18px;border-radius:3px;background:rgba(200,255,0,.15);border:1px solid rgba(200,255,0,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:11px;color:var(--acid)}
+
+/* grid cards */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.info-card{padding:16px;background:var(--bg3);border:1px solid var(--w08)}
+.ic-label{font-family:var(--fm);font-size:8px;letter-spacing:.16em;color:var(--w30);margin-bottom:6px}
+.ic-value{font-size:14px;font-weight:600;color:var(--w80)}
+.ic-sub{font-family:var(--fm);font-size:9px;color:var(--w30);margin-top:3px;letter-spacing:.08em}
+
+/* faq */
+.faq{background:var(--bg2);border:1px solid var(--w08);margin-bottom:2px}
+.faq-q{padding:16px 20px;font-size:14px;font-weight:600;color:var(--w);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.faq-q:hover{color:var(--acid)}
+.faq-a{padding:0 20px;font-size:13px;color:var(--w50);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-a.open{max-height:400px;padding:0 20px 16px}
+
+/* success box */
+.success-box{text-align:center;padding:52px 32px;background:linear-gradient(135deg,rgba(200,255,0,.06),rgba(169,112,255,.06));border:1px solid rgba(200,255,0,.2);margin-top:60px}
+.success-icon{font-size:52px;margin-bottom:16px}
+.success-title{font-size:28px;font-weight:800;letter-spacing:-.03em;color:var(--w);margin-bottom:10px}
+.success-sub{font-size:14px;color:var(--w50);max-width:400px;margin:0 auto;line-height:1.7}
+.success-url{font-family:var(--fm);font-size:13px;color:var(--acid);margin-top:20px;padding:12px 20px;background:rgba(200,255,0,.08);border:1px solid rgba(200,255,0,.25);display:inline-block;letter-spacing:.04em}
+
+/* divider */
+.divider{height:1px;background:var(--w08);margin:60px 0}
+
+/* labels */
+.section-label{font-family:var(--fm);font-size:9px;letter-spacing:.2em;color:var(--w30);margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <div class="site-header">
+    <div class="logo-line">
+      <div class="logo-dot"></div>
+      <span class="logo-txt">DEVOPSPATH_v4 · PUBLISH GUIDE</span>
+      <div class="logo-dot"></div>
+    </div>
+    <h1 class="main-title">
+      Publish to<br>
+      <span class="acc">GitHub</span> &<br>
+      Go Live — Free
+    </h1>
+    <p class="sub-title">
+      Complete step-by-step guide to get DevOpsPath deployed on GitHub Pages with a permanent public URL — in under 10 minutes, free forever.
+    </p>
+  </div>
+
+  <!-- ── LIVE URL FORMAT ── -->
+  <div class="section-label">YOUR LIVE URL — AFTER DEPLOYMENT</div>
+  <div class="url-box">
+    <div>
+      <div class="url-label">🌐 PERMANENT PUBLIC URL</div>
+      <div class="url-value" id="url-display">https://YOUR_USERNAME.github.io/cloud-devops-roadmap/</div>
+      <div class="url-note">Replace YOUR_USERNAME with your actual GitHub username</div>
+    </div>
+    <button class="copy-btn" id="copy-url-btn" onclick="copyURL()">COPY URL</button>
+  </div>
+
+  <!-- ── STEPS HEADER ── -->
+  <div class="steps-header">
+    <div class="section-label">STEP-BY-STEP GUIDE</div>
+    <h2>From Zero to Live</h2>
+    <p>Follow each step in order. Every command is copy-pasteable. Estimated time: <strong style="color:var(--w80)">8–12 minutes.</strong></p>
+  </div>
+
+  <!-- ══════════════════════════════════
+    STEP 1 — PREREQUISITES
+  ══════════════════════════════════ -->
+  <div class="step">
+    <div class="step-inner">
+      <div class="step-head" onclick="toggleStep(1)">
+        <div class="step-num done" id="num-1">01</div>
+        <div class="step-info">
+          <div class="step-title">Install Prerequisites</div>
+          <div class="step-meta">GIT · NODE.JS 18+ · GITHUB ACCOUNT · ~3 MIN</div>
+        </div>
+        <div class="step-chevron open" id="chev-1">▼</div>
+      </div>
+      <div class="step-body open" id="body-1">
+        <p class="step-desc">You need three things installed before anything else. Check if you already have them:</p>
+
+        <div class="term">
+          <div class="term-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">terminal — check existing installs</span>
+          </div>
+          <div class="term-body">
+            <button class="term-copy" onclick="copyCode(this,'git --version\nnode --version\nnpm --version')">COPY</button>
+            <span class="term-line comment"># Check if already installed</span>
+            <span class="term-line cmd">git --version</span>
+            <span class="term-line ok"># Expected: git version 2.x.x</span>
+            <span class="term-line cmd">node --version</span>
+            <span class="term-line ok"># Expected: v18.x.x or v20.x.x</span>
+            <span class="term-line cmd">npm --version</span>
+            <span class="term-line ok"># Expected: 9.x.x or higher</span>
+          </div>
+        </div>
+
+        <div class="callout tip"><strong>✓ IF ALREADY INSTALLED</strong> Skip to Step 2. All three show a version number? You're good.</div>
+
+        <div class="grid-2">
+          <div class="info-card">
+            <div class="ic-label">GIT</div>
+            <div class="ic-value">git-scm.com</div>
+            <div class="ic-sub">Download → Install → Restart terminal</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">NODE.JS</div>
+            <div class="ic-value">nodejs.org/en/download</div>
+            <div class="ic-sub">Download LTS version → Install</div>
+          </div>
+        </div>
+
+        <div class="callout info"><strong>GITHUB ACCOUNT</strong> Create a free account at <strong>github.com/signup</strong> if you don't have one. Choose a good username — it appears in your URL forever.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+    STEP 2 — GET THE PROJECT
+  ══════════════════════════════════ -->
+  <div class="step">
+    <div class="step-inner">
+      <div class="step-head" onclick="toggleStep(2)">
+        <div class="step-num active" id="num-2">02</div>
+        <div class="step-info">
+          <div class="step-title">Get the Project Files</div>
+          <div class="step-meta">OPEN TERMINAL · NAVIGATE · INSTALL · ~2 MIN</div>
+        </div>
+        <div class="step-chevron open" id="chev-2">▼</div>
+      </div>
+      <div class="step-body open" id="body-2">
+        <p class="step-desc">
+          The project folder is named <strong>cloud-devops-roadmap</strong>.
+          Open a terminal and navigate into it, then install dependencies:
+        </p>
+
+        <div class="term">
+          <div class="term-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">terminal — setup project</span>
+          </div>
+          <div class="term-body">
+            <button class="term-copy" onclick="copyCode(this,'cd cloud-devops-roadmap\nnpm install\nnpm run build')">COPY</button>
+            <span class="term-line comment"># Navigate into the project folder</span>
+            <span class="term-line cmd">cd cloud-devops-roadmap</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># Install all dependencies</span>
+            <span class="term-line cmd">npm install</span>
+            <span class="term-line info"># This installs React, Vite, pdfjs, etc.</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># Test the build works</span>
+            <span class="term-line cmd">npm run build</span>
+            <span class="term-line ok"># Expected: ✓ built in ~300ms</span>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <strong>✓ SUCCESS INDICATOR</strong>
+          You'll see: <code style="font-family:var(--fm);color:var(--acid)">✓ built in 300ms</code> with no errors. If you see errors, make sure Node.js is v18 or higher.
+        </div>
+
+        <div class="term">
+          <div class="term-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">optional — test locally first</span>
+          </div>
+          <div class="term-body">
+            <button class="term-copy" onclick="copyCode(this,'npm run dev')">COPY</button>
+            <span class="term-line comment"># Optional: run locally before deploying</span>
+            <span class="term-line cmd">npm run dev</span>
+            <span class="term-line ok"># Opens at: http://localhost:5173/cloud-devops-roadmap/</span>
+            <span class="term-line info"># Press Ctrl+C to stop</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+    STEP 3 — CREATE GITHUB REPO
+  ══════════════════════════════════ -->
+  <div class="step">
+    <div class="step-inner">
+      <div class="step-head" onclick="toggleStep(3)">
+        <div class="step-num active" id="num-3">03</div>
+        <div class="step-info">
+          <div class="step-title">Create GitHub Repository</div>
+          <div class="step-meta">GITHUB.COM · BROWSER · ~2 MIN</div>
+        </div>
+        <div class="step-chevron open" id="chev-3">▼</div>
+      </div>
+      <div class="step-body open" id="body-3">
+        <p class="step-desc">
+          Go to <strong>github.com</strong> in your browser and create a new repository.
+          The repo name <strong>must match exactly</strong> — it determines your URL.
+        </p>
+
+        <div class="screen-mock">
+          <div class="screen-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">github.com/new</span>
+          </div>
+          <div class="screen-body">
+            <div class="screen-action">
+              <span class="screen-action-arrow">→</span>
+              <span class="screen-action-text">Repository name: <strong class="screen-highlight">cloud-devops-roadmap</strong></span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">→</span>
+              <span class="screen-action-text">Visibility: <strong class="screen-highlight">Public</strong> (required for free GitHub Pages)</span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">→</span>
+              <span class="screen-action-text"><strong class="screen-highlight">Do NOT</strong> check "Add a README file"</span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">→</span>
+              <span class="screen-action-text"><strong class="screen-highlight">Do NOT</strong> add .gitignore or license</span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">→</span>
+              <span class="screen-action-text">Click <strong class="screen-highlight">Create repository</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout warn">
+          <strong>⚠ CRITICAL — NAME MUST MATCH EXACTLY</strong>
+          The repo MUST be named <code style="font-family:var(--fm)">cloud-devops-roadmap</code> (lowercase, hyphens, no spaces). This matches the <code style="font-family:var(--fm)">base</code> in vite.config.js and determines your URL: <code style="font-family:var(--fm)">https://USERNAME.github.io/cloud-devops-roadmap/</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+    STEP 4 — CONFIGURE GIT IDENTITY
+  ══════════════════════════════════ -->
+  <div class="step">
+    <div class="step-inner">
+      <div class="step-head" onclick="toggleStep(4)">
+        <div class="step-num active" id="num-4">04</div>
+        <div class="step-info">
+          <div class="step-title">Configure Git Identity</div>
+          <div class="step-meta">ONE-TIME SETUP · TERMINAL · ~1 MIN</div>
+        </div>
+        <div class="step-chevron open" id="chev-4">▼</div>
+      </div>
+      <div class="step-body open" id="body-4">
+        <p class="step-desc">If this is your first time using git, tell it who you are. This is a one-time global setup.</p>
+
+        <div class="term">
+          <div class="term-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">terminal — git identity (one-time)</span>
+          </div>
+          <div class="term-body">
+            <button class="term-copy" onclick="copyCode(this,'git config --global user.name \"Your Name\"\ngit config --global user.email \"your@email.com\"')">COPY</button>
+            <span class="term-line comment"># Replace with your actual name and email</span>
+            <span class="term-line cmd">git config --global user.name "Your Name"</span>
+            <span class="term-line cmd">git config --global user.email "your@email.com"</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># Verify</span>
+            <span class="term-line cmd">git config --global --list</span>
+            <span class="term-line ok"># Should show your name and email</span>
+          </div>
+        </div>
+
+        <div class="callout tip"><strong>✓ ALREADY CONFIGURED?</strong> Run <code style="font-family:var(--fm)">git config --global user.name</code> — if it shows your name, skip this step.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+    STEP 5 — PUSH CODE
+  ══════════════════════════════════ -->
+  <div class="step">
+    <div class="step-inner">
+      <div class="step-head" onclick="toggleStep(5)">
+        <div class="step-num active" id="num-5">05</div>
+        <div class="step-info">
+          <div class="step-title">Push Code to GitHub</div>
+          <div class="step-meta">TERMINAL · AUTHENTICATION · ~2 MIN</div>
+        </div>
+        <div class="step-chevron open" id="chev-5">▼</div>
+      </div>
+      <div class="step-body open" id="body-5">
+        <p class="step-desc">
+          Initialize git in the project folder, connect it to GitHub, and push all your code.
+          <strong>Replace YOUR_USERNAME with your actual GitHub username.</strong>
+        </p>
+
+        <div class="term">
+          <div class="term-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">terminal — push to github (run from inside cloud-devops-roadmap folder)</span>
+          </div>
+          <div class="term-body">
+            <button class="term-copy" onclick="copyCode(this,'git init\ngit add .\ngit commit -m \"feat: DevOpsPath v4 — personalized Cloud & DevOps roadmap\"\ngit branch -M main\ngit remote add origin https://github.com/YOUR_USERNAME/cloud-devops-roadmap.git\ngit push -u origin main')">COPY ALL</button>
+            <span class="term-line comment"># 1. Initialize git (creates .git folder)</span>
+            <span class="term-line cmd">git init</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># 2. Stage ALL files</span>
+            <span class="term-line cmd">git add .</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># 3. Create first commit</span>
+            <span class="term-line cmd">git commit -m "feat: DevOpsPath v4 — personalized Cloud &amp; DevOps roadmap"</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># 4. Rename branch to main</span>
+            <span class="term-line cmd">git branch -M main</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># 5. Connect to your GitHub repo ← REPLACE YOUR_USERNAME</span>
+            <span class="term-line cmd">git remote add origin https://github.com/YOUR_USERNAME/cloud-devops-roadmap.git</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># 6. Push everything to GitHub</span>
+            <span class="term-line cmd">git push -u origin main</span>
+            <span class="term-line ok"># Expected: Branch 'main' set up to track remote branch 'main'</span>
+          </div>
+        </div>
+
+        <div class="callout warn">
+          <strong>⚠ AUTHENTICATION — GITHUB WILL ASK FOR PASSWORD</strong>
+          GitHub no longer accepts your account password. You need a <strong>Personal Access Token</strong>.
+          See Step 5b below for how to generate one.
+        </div>
+
+        <div class="term">
+          <div class="term-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">step 5b — generate personal access token (PAT)</span>
+          </div>
+          <div class="term-body">
+            <span class="term-line comment"># In your BROWSER, go to:</span>
+            <span class="term-line ok">github.com → Settings → Developer settings</span>
+            <span class="term-line ok">→ Personal access tokens → Tokens (classic)</span>
+            <span class="term-line ok">→ Generate new token (classic)</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># Token settings:</span>
+            <span class="term-line info">Note: "DevOpsPath deploy"</span>
+            <span class="term-line info">Expiration: 90 days (or No expiration)</span>
+            <span class="term-line info">Scopes: ✓ repo  (check the repo checkbox)</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># Click "Generate token" — COPY IT IMMEDIATELY</span>
+            <span class="term-line warn"># It only shows ONCE. Paste it as your password when git asks.</span>
+          </div>
+        </div>
+
+        <div class="screen-mock">
+          <div class="screen-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">github.com/settings/tokens</span>
+          </div>
+          <div class="screen-body">
+            <div class="screen-action">
+              <span class="screen-action-arrow">1</span>
+              <span class="screen-action-text">github.com → click your <strong class="screen-highlight">profile picture</strong> → Settings</span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">2</span>
+              <span class="screen-action-text">Left sidebar → scroll to bottom → <strong class="screen-highlight">Developer settings</strong></span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">3</span>
+              <span class="screen-action-text">Personal access tokens → <strong class="screen-highlight">Tokens (classic)</strong></span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">4</span>
+              <span class="screen-action-text">Generate new token → <strong class="screen-highlight">Generate new token (classic)</strong></span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">5</span>
+              <span class="screen-action-text">Check <strong class="screen-highlight">repo</strong> scope → Generate → <strong class="screen-highlight">COPY TOKEN</strong></span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">6</span>
+              <span class="screen-action-text">When git asks "Password:" → paste the token (you won't see it typed)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+    STEP 6 — ENABLE GITHUB PAGES
+  ══════════════════════════════════ -->
+  <div class="step">
+    <div class="step-inner">
+      <div class="step-head" onclick="toggleStep(6)">
+        <div class="step-num active" id="num-6">06</div>
+        <div class="step-info">
+          <div class="step-title">Enable GitHub Pages</div>
+          <div class="step-meta">GITHUB.COM → SETTINGS → PAGES · 30 SECONDS</div>
+        </div>
+        <div class="step-chevron open" id="chev-6">▼</div>
+      </div>
+      <div class="step-body open" id="body-6">
+        <p class="step-desc">After pushing, go to your repo on GitHub and enable GitHub Pages deployment via GitHub Actions:</p>
+
+        <div class="screen-mock">
+          <div class="screen-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">github.com/YOUR_USERNAME/cloud-devops-roadmap</span>
+          </div>
+          <div class="screen-body">
+            <div class="screen-action">
+              <span class="screen-action-arrow">1</span>
+              <span class="screen-action-text">Go to your repo → click the <strong class="screen-highlight">Settings</strong> tab (top navigation)</span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">2</span>
+              <span class="screen-action-text">Left sidebar → scroll down → click <strong class="screen-highlight">Pages</strong></span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">3</span>
+              <span class="screen-action-text">Under "Build and deployment" → Source → select <strong class="screen-highlight">GitHub Actions</strong></span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">4</span>
+              <span class="screen-action-text">Click <strong class="screen-highlight">Save</strong> (if shown)</span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">✓</span>
+              <span class="screen-action-text">That's it — the workflow file is already in the repo and will run automatically</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <strong>✓ NO WORKFLOW FILE NEEDED</strong>
+          The file <code style="font-family:var(--fm)">.github/workflows/deploy.yml</code> is already in the project. GitHub will find it automatically and start deploying on every push to <code style="font-family:var(--fm)">main</code>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+    STEP 7 — WATCH IT DEPLOY
+  ══════════════════════════════════ -->
+  <div class="step">
+    <div class="step-inner">
+      <div class="step-head" onclick="toggleStep(7)">
+        <div class="step-num active" id="num-7">07</div>
+        <div class="step-info">
+          <div class="step-title">Watch It Deploy Live</div>
+          <div class="step-meta">GITHUB ACTIONS TAB · ~60 SECONDS</div>
+        </div>
+        <div class="step-chevron open" id="chev-7">▼</div>
+      </div>
+      <div class="step-body open" id="body-7">
+        <p class="step-desc">After enabling Pages, the first deployment starts automatically. Watch it here:</p>
+
+        <div class="screen-mock">
+          <div class="screen-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">github.com/YOUR_USERNAME/cloud-devops-roadmap/actions</span>
+          </div>
+          <div class="screen-body">
+            <div class="screen-action">
+              <span class="screen-action-arrow">1</span>
+              <span class="screen-action-text">Click the <strong class="screen-highlight">Actions</strong> tab in your repo</span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">2</span>
+              <span class="screen-action-text">You'll see <strong class="screen-highlight">🚀 Deploy to GitHub Pages</strong> running (yellow circle = in progress)</span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">3</span>
+              <span class="screen-action-text">Click it to watch live logs — Build → Upload → Deploy</span>
+            </div>
+            <div class="screen-action">
+              <span class="screen-action-arrow">✓</span>
+              <span class="screen-action-text"><strong class="screen-highlight">Green checkmark ✓</strong> = your site is live!</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <strong>⏱ HOW LONG?</strong>
+          First deploy takes ~60–90 seconds. After it succeeds, your live URL is printed at the bottom of the deploy step.
+        </div>
+
+        <div class="term">
+          <div class="term-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">your live site</span>
+          </div>
+          <div class="term-body">
+            <span class="term-line ok"># Your site is live at:</span>
+            <span class="term-line cmd">https://YOUR_USERNAME.github.io/cloud-devops-roadmap/</span>
+            <span class="term-line"></span>
+            <span class="term-line ok"># Demo video at:</span>
+            <span class="term-line cmd">https://YOUR_USERNAME.github.io/cloud-devops-roadmap/demo/video-demo.html</span>
+            <span class="term-line"></span>
+            <span class="term-line ok"># Interactive preview at:</span>
+            <span class="term-line cmd">https://YOUR_USERNAME.github.io/cloud-devops-roadmap/demo/index.html</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+    STEP 8 — FUTURE UPDATES
+  ══════════════════════════════════ -->
+  <div class="step">
+    <div class="step-inner">
+      <div class="step-head" onclick="toggleStep(8)">
+        <div class="step-num active" id="num-8">08</div>
+        <div class="step-info">
+          <div class="step-title">Every Future Update</div>
+          <div class="step-meta">3 COMMANDS · ~60 SEC AUTO-REDEPLOY</div>
+        </div>
+        <div class="step-chevron open" id="chev-8">▼</div>
+      </div>
+      <div class="step-body open" id="body-8">
+        <p class="step-desc">Any time you make changes and want to update the live site, just run these three commands. GitHub Actions redeploys automatically in ~60 seconds.</p>
+
+        <div class="term">
+          <div class="term-bar">
+            <div class="tdot" style="background:#ff5f57"></div>
+            <div class="tdot" style="background:#ffbd2e"></div>
+            <div class="tdot" style="background:#28c840"></div>
+            <span class="term-title">terminal — update live site (run from project folder)</span>
+          </div>
+          <div class="term-body">
+            <button class="term-copy" onclick="copyCode(this,'git add .\ngit commit -m \"update: describe what you changed\"\ngit push')">COPY</button>
+            <span class="term-line comment"># Stage all changes</span>
+            <span class="term-line cmd">git add .</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># Commit with a description</span>
+            <span class="term-line cmd">git commit -m "update: describe what you changed"</span>
+            <span class="term-line"></span>
+            <span class="term-line comment"># Push → triggers auto-deploy</span>
+            <span class="term-line cmd">git push</span>
+            <span class="term-line ok"># Live in ~60 seconds at your URL</span>
+          </div>
+        </div>
+
+        <ul class="checklist">
+          <li><div class="check-box">✓</div>No manual build needed — GitHub Actions runs <code style="font-family:var(--fm)">npm run build</code> for you</li>
+          <li><div class="check-box">✓</div>No FTP, no server config, no hosting fees</li>
+          <li><div class="check-box">✓</div>Every push to <code style="font-family:var(--fm)">main</code> triggers a new deploy automatically</li>
+          <li><div class="check-box">✓</div>GitHub Pages is free forever for public repos</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── COST TABLE ── -->
+  <div class="section-label">COST BREAKDOWN</div>
+  <div style="background:var(--bg2);border:1px solid var(--w08);margin-bottom:60px;overflow:hidden">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0">
+      <div style="padding:16px;background:var(--bg3);border-right:1px solid var(--w08)"><div class="ic-label">PLATFORM</div><div class="ic-value" style="color:var(--w)">GitHub Pages</div></div>
+      <div style="padding:16px;border-right:1px solid var(--w08)"><div class="ic-label">MONTHLY COST</div><div class="ic-value" style="color:var(--acid)">$0.00</div></div>
+      <div style="padding:16px;border-right:1px solid var(--w08)"><div class="ic-label">CUSTOM DOMAIN</div><div class="ic-value" style="color:var(--w80)">✓ Free</div></div>
+      <div style="padding:16px"><div class="ic-label">AUTO-DEPLOY</div><div class="ic-value" style="color:var(--w80)">✓ Every push</div></div>
+    </div>
+  </div>
+
+  <!-- ── FAQ ── -->
+  <div class="section-label">TROUBLESHOOTING — COMMON ISSUES</div>
+  <div style="margin-bottom:60px">
+
+    <div class="faq">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        I get "authentication failed" or "wrong password" when pushing
+        <span>▼</span>
+      </div>
+      <div class="faq-a">
+        GitHub no longer accepts your account password for git operations. You must use a <strong>Personal Access Token (PAT)</strong>. Follow Step 5b above — generate a token with <code style="font-family:var(--fm)">repo</code> scope, then paste it when git asks for your password. If you already tried with the wrong password, run <code style="font-family:var(--fm)">git credential reject</code> or clear saved credentials in your OS keychain.
+      </div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        The site shows a blank page or 404 at my URL
+        <span>▼</span>
+      </div>
+      <div class="faq-a">
+        This almost always means the <code style="font-family:var(--fm)">base</code> in <code style="font-family:var(--fm)">vite.config.js</code> doesn't match your repo name. The file should say <code style="font-family:var(--fm)">base: '/cloud-devops-roadmap/'</code>. If you renamed your repo, update that value and push again. Also wait 2–3 minutes after the Actions workflow shows green before checking the URL.
+      </div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        GitHub Actions workflow fails — build error
+        <span>▼</span>
+      </div>
+      <div class="faq-a">
+        Click the failed workflow run in the Actions tab → expand the "Build" step → read the error. Most common causes: (1) Node version mismatch — the workflow uses Node 20 which should work with everything. (2) Missing <code style="font-family:var(--fm)">package-lock.json</code> — make sure you didn't add <code style="font-family:var(--fm)">package-lock.json</code> to <code style="font-family:var(--fm)">.gitignore</code>. (3) Syntax error in a component you edited — run <code style="font-family:var(--fm)">npm run build</code> locally first to catch errors.
+      </div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        I don't see the Pages option in Settings
+        <span>▼</span>
+      </div>
+      <div class="faq-a">
+        Make sure the repository is <strong>Public</strong> (not Private). GitHub Pages is only free for public repos. Go to Settings → General → Danger Zone → Change repository visibility → Make public.
+      </div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        How do I add a custom domain (e.g. devopspath.com)?
+        <span>▼</span>
+      </div>
+      <div class="faq-a">
+        (1) Buy a domain from Namecheap, GoDaddy, or Cloudflare Registrar (~$10/year). (2) In your domain's DNS settings, add a CNAME record pointing to <code style="font-family:var(--fm)">YOUR_USERNAME.github.io</code>. (3) In GitHub → Settings → Pages → Custom domain → enter your domain → Save. (4) Check "Enforce HTTPS". Also update <code style="font-family:var(--fm)">vite.config.js</code> to <code style="font-family:var(--fm)">base: '/'</code> when using a custom domain.
+      </div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Can I deploy to Vercel or Netlify instead?
+        <span>▼</span>
+      </div>
+      <div class="faq-a">
+        Yes. For Vercel: sign up at vercel.com with GitHub → New Project → import your repo → Framework: Vite → Deploy. For Netlify: netlify.com → Add new site → Import from Git → select repo → Build command: <code style="font-family:var(--fm)">npm run build</code> → Publish directory: <code style="font-family:var(--fm)">dist</code> → Deploy. <strong>Important:</strong> for both Vercel and Netlify, change <code style="font-family:var(--fm)">base: '/cloud-devops-roadmap/'</code> to <code style="font-family:var(--fm)">base: '/'</code> in vite.config.js.
+      </div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        The PDF doesn't upload — nothing happens when I drop a file
+        <span>▼</span>
+      </div>
+      <div class="faq-a">
+        Make sure the PDF is <strong>text-based</strong>, not a scanned image. Resumes saved as PDF from Microsoft Word, Google Docs, Canva, or Notion work perfectly. Scanned photo PDFs have no readable text. You can check by opening the PDF and trying to select text — if you can select it, it will work.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SUCCESS ── -->
+  <div class="success-box">
+    <div class="success-icon">🚀</div>
+    <div class="success-title">You're Live — Free Forever</div>
+    <div class="success-sub">Every time you push to main, GitHub Actions automatically rebuilds and redeploys in ~60 seconds. No servers, no hosting bills, no maintenance.</div>
+    <div class="success-url" id="live-url">https://YOUR_USERNAME.github.io/cloud-devops-roadmap/</div>
+    <br/><br/>
+    <button onclick="copyURL()" style="background:var(--acid);color:#000;border:none;padding:12px 28px;font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.14em;cursor:pointer;margin-right:8px">COPY YOUR URL</button>
+    <a href="index.html" style="display:inline-block;padding:12px 28px;border:1px solid rgba(255,255,255,.2);color:var(--w50);font-family:var(--fm);font-size:10px;letter-spacing:.14em;text-decoration:none">← BACK TO DEMO</a>
+  </div>
+
+</div>
+
+<script>
+// ── Accordion steps ──
+function toggleStep(n) {
+  const body  = document.getElementById('body-' + n);
+  const chev  = document.getElementById('chev-' + n);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chev.classList.toggle('open', !isOpen);
+}
+
+// ── FAQ ──
+function toggleFaq(el) {
+  const a = el.nextElementSibling;
+  a.classList.toggle('open');
+  el.querySelector('span').textContent = a.classList.contains('open') ? '▲' : '▼';
+}
+
+// ── Copy URL ──
+function copyURL() {
+  const url = document.getElementById('url-display').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('copy-url-btn');
+    btn.textContent = '✓ COPIED';
+    btn.classList.add('done');
+    setTimeout(() => { btn.textContent = 'COPY URL'; btn.classList.remove('done'); }, 2500);
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = url; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+// ── Copy code blocks ──
+function copyCode(btn, code) {
+  const text = code || btn.closest('.term-body').innerText.replace(/COPY(\s+COPY ALL)?/g,'').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ COPIED'; btn.classList.add('done');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('done'); }, 2000);
+  });
+}
+
+// ── Auto-personalize URL if username is in URL params ──
+const params = new URLSearchParams(window.location.search);
+const user   = params.get('user') || params.get('username');
+if (user) {
+  const url = `https://${user}.github.io/cloud-devops-roadmap/`;
+  document.getElementById('url-display').textContent = url;
+  document.getElementById('live-url').textContent    = url;
+}
+</script>
+</body>
+</html>

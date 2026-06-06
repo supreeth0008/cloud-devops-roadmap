@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DevOpsPath — Interactive Experience</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#06060a;--ember:#ff4500;--neon:#00ff88;--ice:#00d4ff;
+  --violet:#7c3aed;--gold:#f5c842;--w:#fff;
+  --fd:'Syne',sans-serif;--fb:'Space Grotesk',sans-serif;--fm:'JetBrains Mono',monospace;
+}
+html,body{height:100%;background:var(--void);color:#fff;font-family:var(--fb);overflow-x:hidden;cursor:none}
+*{cursor:none!important}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:var(--ember)}
+::selection{background:var(--ember);color:#fff}
+
+/* NOISE GRAIN */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.04;pointer-events:none;z-index:9998;mix-blend-mode:overlay}
+
+/* CANVAS */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* CURSOR */
+#cur-dot{position:fixed;width:8px;height:8px;background:#fff;border-radius:50%;pointer-events:none;z-index:99999;top:0;left:0;mix-blend-mode:difference;transform:translate(-50%,-50%);transition:width .15s,height .15s}
+#cur-ring{position:fixed;border:1px solid rgba(255,255,255,0.5);border-radius:50%;pointer-events:none;z-index:99998;top:0;left:0;transform:translate(-50%,-50%);transition:width .3s cubic-bezier(.16,1,.3,1),height .3s cubic-bezier(.16,1,.3,1),border-color .25s}
+.cursor-trail{position:fixed;width:4px;height:4px;border-radius:50%;pointer-events:none;z-index:99997;transform:translate(-50%,-50%);opacity:0}
+
+/* LANDING */
+#landing{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column}
+header{padding:28px 52px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:20}
+.logo-text{font-family:var(--fm);font-size:11px;color:rgba(255,255,255,.22);letter-spacing:.22em}
+
+/* HERO */
+#hero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 52px;max-width:1000px;margin:0 auto;width:100%}
+.eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:28px;opacity:0;animation:slideUp .8s .3s cubic-bezier(.16,1,.3,1) forwards}
+.eyebrow-line{width:30px;height:1px;background:var(--ember)}
+.eyebrow-text{font-family:var(--fm);font-size:10px;color:var(--ember);letter-spacing:.2em}
+
+/* SHATTER HERO TITLE */
+#hero-title{font-family:var(--fd);font-weight:800;font-size:clamp(60px,10vw,140px);line-height:.9;letter-spacing:-.04em;margin-bottom:28px;position:relative;overflow:visible}
+.char-wrap{display:inline-block;overflow:hidden;vertical-align:top}
+.char-inner{display:inline-block;transform:translateY(110%);animation:charReveal .9s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes charReveal{to{transform:translateY(0)}}
+.hollow{-webkit-text-stroke:1px rgba(255,255,255,.18);color:transparent}
+
+.hero-sub{font-size:15px;color:rgba(255,255,255,.35);line-height:1.8;max-width:420px;margin-bottom:56px;opacity:0;animation:slideUp .8s .7s cubic-bezier(.16,1,.3,1) forwards}
+
+/* MAGNETIC ZONE */
+.mag-btn{position:relative;display:inline-block;padding:16px 40px;border:1px solid rgba(255,255,255,.15);border-radius:0;font-family:var(--fm);font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.7);background:rgba(255,255,255,.03);overflow:hidden;opacity:0;animation:slideUp .8s .9s cubic-bezier(.16,1,.3,1) forwards;will-change:transform}
+.mag-btn::before{content:'';position:absolute;inset:0;background:var(--ember);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.mag-btn:hover::before{transform:scaleX(1)}
+.mag-btn:hover{color:#fff;border-color:var(--ember)}
+.mag-btn span{position:relative;z-index:1;transition:color .3s}
+.mag-btn-glow{position:absolute;width:150px;height:150px;background:radial-gradient(circle,rgba(255,69,0,0.4),transparent 70%);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);opacity:0;transition:opacity .3s}
+.mag-btn:hover .mag-btn-glow{opacity:1}
+
+/* STATS */
+.stats-row{display:flex;gap:56px;flex-wrap:wrap;margin-top:72px;opacity:0;animation:slideUp .8s 1.1s cubic-bezier(.16,1,.3,1) forwards}
+.stat{cursor:default}
+.stat-num{font-family:var(--fd);font-size:44px;font-weight:800;color:#fff;line-height:1;transition:color .3s}
+.stat:hover .stat-num{color:var(--ember)}
+.stat-lbl{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.2);letter-spacing:.18em;margin-top:6px}
+
+/* TICKER */
+.ticker-strip{overflow:hidden;border-top:1px solid rgba(255,255,255,.04);padding:13px 0;mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)}
+.ticker-inner{display:flex;gap:0;animation:marquee 36s linear infinite;width:max-content}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* PARTICLE FIELD — fullscreen canvas overlay */
+#particle-canvas{position:fixed;inset:0;z-index:5;pointer-events:none}
+
+/* SECTION — ANTIGRAVITY DEMO */
+#ag-section{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 52px;overflow:hidden}
+#ag-section h2{font-family:var(--fd);font-size:clamp(32px,5vw,64px);font-weight:800;letter-spacing:-.03em;color:#fff;text-align:center;margin-bottom:16px;position:relative;z-index:2}
+#ag-section p{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.16em;text-align:center;margin-bottom:64px;position:relative;z-index:2}
+/* particles live on their own canvas in this section */
+#ag-canvas{position:absolute;inset:0;z-index:1;pointer-events:none}
+/* magnetic card */
+.mag-card{position:relative;z-index:2;width:min(560px,90vw);padding:48px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);backdrop-filter:blur(20px);overflow:hidden;transform-style:preserve-3d;will-change:transform;transition:transform .08s linear,box-shadow .3s}
+.mag-card::after{content:'';position:absolute;inset:0;background:radial-gradient(600px circle at var(--mx,50%) var(--my,50%),rgba(255,69,0,.08),transparent 40%);pointer-events:none;z-index:0}
+.card-shine{position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.04),transparent 70%);pointer-events:none;z-index:1;opacity:0;transition:opacity .3s}
+.mag-card:hover .card-shine{opacity:1}
+.card-content{position:relative;z-index:2}
+.upload-label{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.18em;margin-bottom:28px;display:block}
+.upload-dropzone{border:1px solid rgba(255,255,255,.1);padding:32px;text-align:center;position:relative;overflow:hidden;transition:border-color .3s,background .3s;cursor:pointer}
+.upload-dropzone:hover{border-color:var(--ember);background:rgba(255,69,0,.04)}
+.drop-inner{font-family:var(--fm);font-size:11px;color:rgba(255,255,255,.28);letter-spacing:.14em}
+
+/* RIPPLE on click */
+.ripple{position:absolute;border-radius:50%;background:rgba(255,69,0,.25);transform:scale(0);animation:rippleOut .7s ease forwards;pointer-events:none}
+@keyframes rippleOut{to{transform:scale(8);opacity:0}}
+
+/* TERMINAL SECTION */
+#term-section{position:relative;z-index:10;padding:0 52px 120px;display:flex;justify-content:center}
+.term-wrap{width:min(680px,100%)}
+.term-window{background:#0a0a0f;border:1px solid rgba(255,255,255,.07);overflow:hidden}
+.term-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:#0f0f14;border-bottom:1px solid rgba(255,255,255,.05)}
+.t-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.term-title{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.2);margin-left:10px;letter-spacing:.08em}
+.term-body{padding:24px;min-height:260px;font-family:var(--fm);font-size:12px;line-height:1.8}
+.tline{display:block;margin-bottom:2px}
+.tline-prompt{color:rgba(255,255,255,.2)}
+.tline-cmd{color:rgba(255,255,255,.7)}
+.tline-out{color:rgba(0,255,136,.7)}
+.tline-high{color:rgba(0,212,255,.8)}
+.tline-warn{color:rgba(255,193,66,.75)}
+.tline-done{color:var(--neon);font-weight:500}
+.t-cursor-blink{display:inline-block;background:rgba(255,255,255,.5);width:7px;height:13px;vertical-align:middle;animation:blink .9s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ROADMAP PREVIEW */
+#roadmap-section{position:relative;z-index:10;padding:0 52px 120px;max-width:1080px;margin:0 auto;width:100%}
+.section-eyebrow{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.22);letter-spacing:.2em;margin-bottom:14px}
+.section-title{font-family:var(--fd);font-size:clamp(28px,4vw,52px);font-weight:800;letter-spacing:-.03em;color:#fff;margin-bottom:48px;line-height:1}
+
+/* profile bar */
+.profile-bar{display:flex;align-items:center;gap:24px;padding:20px 0 32px;border-bottom:1px solid rgba(255,255,255,.05);margin-bottom:40px;flex-wrap:wrap}
+.p-name{font-family:var(--fd);font-size:22px;font-weight:700;letter-spacing:-.02em}
+.p-tag{font-family:var(--fm);font-size:10px;letter-spacing:.14em;border:1px solid;border-radius:2px;padding:2px 9px}
+
+/* skill bars */
+.skill-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:40px}
+.skill-item{flex:1 1 80px;min-width:68px}
+.skill-label{display:flex;justify-content:space-between;margin-bottom:5px}
+.skill-lbl,.skill-pct{font-family:var(--fm);font-size:8px;letter-spacing:.1em}
+.skill-track{height:2px;background:rgba(255,255,255,.06);overflow:hidden;border-radius:1px}
+.skill-fill{height:100%;border-radius:1px;transform-origin:left;animation:barFill 1.4s cubic-bezier(.16,1,.3,1) both}
+@keyframes barFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* phases */
+.phase-row{display:flex;align-items:center;gap:20px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:padding-left .25s cubic-bezier(.16,1,.3,1);user-select:none;position:relative;overflow:hidden}
+.phase-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,69,0,.04);transition:width .4s cubic-bezier(.16,1,.3,1)}
+.phase-row:hover::before{width:100%}
+.phase-row:hover{padding-left:14px}
+.phase-icon{font-size:18px;opacity:.65;flex-shrink:0;transition:opacity .2s,transform .3s}
+.phase-row:hover .phase-icon{opacity:1;transform:scale(1.15)}
+.phase-meta{flex:1;min-width:0}
+.phase-name{font-family:var(--fd);font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;letter-spacing:-.01em}
+.phase-sub{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.2);letter-spacing:.08em}
+.phase-prog{width:100px;flex-shrink:0}
+.prog-bar{height:2px;background:rgba(255,255,255,.07);overflow:hidden;border-radius:1px;margin-top:4px}
+.prog-fill{height:100%;border-radius:1px;transition:width .8s cubic-bezier(.16,1,.3,1)}
+.phase-badge{font-family:var(--fm);font-size:8px;letter-spacing:.12em;border:1px solid;border-radius:2px;padding:2px 8px;flex-shrink:0}
+.phase-chev{font-size:9px;color:rgba(255,255,255,.18);transition:transform .3s;flex-shrink:0}
+
+/* insight cards (horizontal scroll) */
+.insight-scroll{display:flex;gap:2px;overflow-x:auto;padding-bottom:16px;scrollbar-width:none;margin-top:48px}
+.insight-scroll::-webkit-scrollbar{display:none}
+.insight-card{flex:0 0 340px;padding:24px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);position:relative;overflow:hidden;transition:background .3s,border-color .3s,transform .3s}
+.insight-card:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12);transform:translateY(-4px)}
+.insight-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.insight-tag{font-family:var(--fm);font-size:8px;letter-spacing:.18em;margin-bottom:12px;display:block}
+.insight-title{font-family:var(--fd);font-size:17px;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:-.01em;line-height:1.2}
+.insight-body{font-size:12px;color:rgba(255,255,255,.42);line-height:1.7}
+
+/* HISTORY SECTION */
+#history-section{position:relative;z-index:10;padding:0 52px 120px;max-width:1080px;margin:0 auto;width:100%}
+.session-row{display:flex;align-items:center;gap:24px;padding:18px;border:1px solid rgba(255,255,255,.05);margin-bottom:1px;transition:background .2s,border-color .2s,transform .2s;flex-wrap:wrap}
+.session-row:hover{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.1);transform:translateX(6px)}
+.s-name{font-size:15px;font-weight:600;color:rgba(255,255,255,.85);margin-bottom:3px}
+.s-meta{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.22);letter-spacing:.1em}
+.s-stat{text-align:center}
+.s-val{font-family:var(--fm);font-size:18px;font-weight:700;line-height:1}
+.s-lbl{font-family:var(--fm);font-size:8px;color:rgba(255,255,255,.2);letter-spacing:.1em;margin-top:3px}
+.del-btn{font-family:var(--fm);font-size:8px;color:rgba(255,69,0,.45);background:none;border:1px solid rgba(255,69,0,.2);border-radius:2px;padding:6px 12px;letter-spacing:.12em;transition:all .2s}
+.del-btn:hover{color:var(--ember);border-color:var(--ember)}
+
+/* SCANNER OVERLAY */
+#scanner{position:fixed;inset:0;z-index:900;background:rgba(6,6,10,.94);display:none;align-items:center;justify-content:center;flex-direction:column;gap:0}
+.scan-window{width:min(600px,90vw)}
+.scan-bar{display:flex;align-items:center;gap:8px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.05);margin-bottom:0}
+.scan-body{padding:24px 20px;min-height:280px;display:flex;flex-direction:column;gap:6px}
+.sl{font-family:var(--fm);font-size:12px;line-height:1.6;letter-spacing:.03em;opacity:0;animation:slIn .25s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes slIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.progress-ring-wrap{margin-top:24px;display:flex;align-items:center;gap:16px}
+.pr-label{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.14em}
+
+/* CONFETTI */
+.confetti-piece{position:fixed;pointer-events:none;z-index:9000;width:8px;height:8px;border-radius:2px;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(var(--cx),var(--cy)) rotate(var(--cr,720deg));opacity:0}}
+
+/* GENERAL ANIM */
+@keyframes slideUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* EXPORT SECTION */
+#export-section{position:relative;z-index:10;padding:0 52px 120px;max-width:1080px;margin:0 auto;width:100%}
+.export-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px}
+.exp-btn{padding:28px 24px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);transition:all .25s;cursor:pointer;text-align:left;position:relative;overflow:hidden}
+.exp-btn::after{content:'';position:absolute;inset:0;background:var(--ember);transform:scaleY(0);transform-origin:bottom;transition:transform .35s cubic-bezier(.16,1,.3,1)}
+.exp-btn:hover::after{transform:scaleY(1)}
+.exp-btn:hover .exp-lbl,.exp-btn:hover .exp-sub{color:#fff;position:relative;z-index:1}
+.exp-lbl{font-family:var(--fm);font-size:11px;font-weight:500;letter-spacing:.12em;margin-bottom:8px;display:block;transition:color .2s;color:var(--neon);position:relative;z-index:1}
+.exp-sub{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.2);letter-spacing:.1em;transition:color .2s;position:relative;z-index:1}
+
+/* FOOTER */
+footer{border-top:1px solid rgba(255,255,255,.04);padding:20px 52px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:10}
+footer span,footer a{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.16);letter-spacing:.12em;text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- ═══════ CUSTOM CURSOR ═══════ -->
+<div id="cur-dot"></div>
+<div id="cur-ring" style="width:36px;height:36px"></div>
+
+<!-- ═══════ TRAIL DOTS (created by JS) ═══════ -->
+
+<!-- ═══════ CINEMATIC BG CANVAS ═══════ -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- ═══════ ANTIGRAVITY PARTICLE CANVAS ═══════ -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- ═══════════════════════════════════════════════
+  LANDING / HERO
+════════════════════════════════════════════════ -->
+<div id="landing">
+  <header>
+    <span class="logo-text">DEVOPSPATH_v4</span>
+    <span class="logo-text" style="letter-spacing:.14em">CLOUD · DEVOPS · ROADMAP</span>
+  </header>
+
+  <div id="hero">
+    <div class="eyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">UPLOAD RESUME → GET PERSONALIZED ROADMAP</span>
+    </div>
+
+    <div id="hero-title" aria-label="YOUR CLOUD PATH.">
+      <!-- chars injected by JS -->
+    </div>
+
+    <p class="hero-sub">
+      Drop your résumé. Seconds later — 8-phase personalized roadmap, skill gaps mapped, learning style matched, certifications sequenced.
+    </p>
+
+    <!-- MAGNETIC BUTTON -->
+    <div class="mag-btn" id="hero-cta" onclick="showAGSection()" data-mag>
+      <div class="mag-btn-glow"></div>
+      <span>DROP YOUR RESUME HERE</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat" data-mag-soft>
+        <div class="stat-num" id="cnt-phases">0</div>
+        <div class="stat-lbl">PHASES</div>
+      </div>
+      <div class="stat" data-mag-soft>
+        <div class="stat-num" id="cnt-topics">0</div>
+        <div class="stat-lbl">TOPICS</div>
+      </div>
+      <div class="stat" data-mag-soft>
+        <div class="stat-num" id="cnt-res">0</div>
+        <div class="stat-lbl">RESOURCES</div>
+      </div>
+      <div class="stat" data-mag-soft>
+        <div class="stat-num">0</div>
+        <div class="stat-lbl">SERVERS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ticker-strip">
+    <div class="ticker-inner" id="ticker"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+  ANTIGRAVITY CARD SECTION (scroll down to reach)
+════════════════════════════════════════════════ -->
+<div id="ag-section">
+  <canvas id="ag-canvas"></canvas>
+  <h2 id="ag-title">Move your cursor<br>over this card</h2>
+  <p>INTERACTIVE 3D TILT · PARTICLE ANTIGRAVITY · MAGNETIC FIELD</p>
+
+  <!-- 3D TILT UPLOAD CARD -->
+  <div class="mag-card" id="tilt-card">
+    <div class="card-shine"></div>
+    <div class="card-content">
+      <span class="upload-label">— STEP 01 / 01 —</span>
+      <div class="upload-dropzone" id="main-drop"
+        onclick="triggerScan(this)"
+        ondragover="event.preventDefault();this.style.borderColor='var(--ember)';this.style.background='rgba(255,69,0,.05)'"
+        ondragleave="this.style.borderColor='rgba(255,255,255,.1)';this.style.background='transparent'"
+        ondrop="event.preventDefault();triggerScan(this)">
+        <div class="drop-inner" id="drop-text">— DROP RESUME PDF —</div>
+        <div style="font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.12);margin-top:8px;letter-spacing:.12em">or click to browse</div>
+        <div id="drop-progress" style="display:none;margin-top:18px">
+          <div style="height:1px;background:rgba(255,255,255,.07);overflow:hidden">
+            <div id="drop-prog-fill" style="height:100%;width:0;background:var(--ember);transition:width .15s"></div>
+          </div>
+          <div id="drop-prog-label" style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.14em;margin-top:8px">PARSING…</div>
+        </div>
+      </div>
+      <!-- Profile stats (hidden until analyzed) -->
+      <div id="card-stats" style="display:none;margin-top:24px;display:none">
+        <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:space-between">
+          <div style="text-align:center"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--neon)" id="cs-topics">6</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,.2);letter-spacing:.14em;margin-top:3px">KNOWN</div></div>
+          <div style="text-align:center"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--ice)" id="cs-weeks">31w</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,.2);letter-spacing:.14em;margin-top:3px">TIMELINE</div></div>
+          <div style="text-align:center"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--violet)" id="cs-level">Lv.5</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,.2);letter-spacing:.14em;margin-top:3px">RANK</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+  LIVE TERMINAL (auto-types)
+════════════════════════════════════════════════ -->
+<div id="term-section">
+  <div class="term-wrap">
+    <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.2);letter-spacing:.18em;margin-bottom:16px">WHAT HAPPENS WHEN YOU DROP YOUR PDF</div>
+    <div class="term-window">
+      <div class="term-bar">
+        <div class="t-dot" style="background:#ff5f57"></div>
+        <div class="t-dot" style="background:#ffbd2e"></div>
+        <div class="t-dot" style="background:#28c840"></div>
+        <span class="term-title">devopspath — resume-parser — bash</span>
+      </div>
+      <div class="term-body" id="term-body">
+        <span class="t-cursor-blink"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+  ROADMAP PREVIEW
+════════════════════════════════════════════════ -->
+<div id="roadmap-section">
+  <div class="section-eyebrow">YOUR PERSONALIZED ROADMAP PREVIEW</div>
+  <div class="section-title">The<br><span id="sec-name" style="color:var(--ember)">Cloud Architect</span><br>Path</div>
+
+  <!-- profile bar -->
+  <div class="profile-bar">
+    <div>
+      <div class="p-name">Arjun Sharma</div>
+      <div style="display:flex;gap:8px;margin-top:6px;align-items:center;flex-wrap:wrap">
+        <span class="p-tag" style="color:var(--gold);border-color:rgba(245,200,66,.35)">MID</span>
+        <span class="p-tag" style="color:rgba(255,255,255,.28);border-color:rgba(255,255,255,.1)">Backend Development · 3y exp</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:28px;margin-left:auto;flex-wrap:wrap;align-items:center">
+      <div style="text-align:right"><div style="font-family:var(--fd);font-size:24px;font-weight:700;color:var(--neon)">6</div><div class="stat-lbl" style="margin-top:2px">TOPICS KNOWN</div></div>
+      <div style="text-align:right"><div style="font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ice)">~31w</div><div class="stat-lbl" style="margin-top:2px">TIMELINE</div></div>
+      <div style="text-align:right"><div style="font-family:var(--fd);font-size:24px;font-weight:700;color:var(--violet)">Lv.5</div><div class="stat-lbl" style="margin-top:2px">CLOUD ARCHITECT</div></div>
+      <button class="del-btn" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.3)" onclick="goTop()">← BACK</button>
+    </div>
+  </div>
+
+  <!-- skill strip -->
+  <div class="skill-strip" id="skill-strip"></div>
+
+  <!-- phases -->
+  <div id="phases-list"></div>
+
+  <!-- insights horizontal scroll -->
+  <div style="margin-top:48px">
+    <div class="section-eyebrow" style="margin-bottom:20px">AI INSIGHTS — BASED ON YOUR RESUME</div>
+    <div class="insight-scroll" id="insight-scroll"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+  HISTORY / DB SECTION
+════════════════════════════════════════════════ -->
+<div id="history-section">
+  <div class="section-eyebrow">SESSION HISTORY · INDEXEDDB + LOCALSTORAGE · YOUR DEVICE ONLY</div>
+  <div class="section-title" style="margin-bottom:32px">History</div>
+  <div id="sessions-list"></div>
+  <div style="margin-top:24px;padding:20px;border:1px solid rgba(255,69,0,.12);background:rgba(255,69,0,.03)">
+    <div style="font-family:var(--fm);font-size:9px;color:var(--ember);letter-spacing:.18em;margin-bottom:8px">DANGER ZONE</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-size:13px;color:rgba(255,255,255,.32)">Permanently wipe all sessions, notes, and checklists from your device.</span>
+      <button class="del-btn" onclick="this.textContent='WIPED'">WIPE ALL DATA</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+  EXPORT SECTION
+════════════════════════════════════════════════ -->
+<div id="export-section">
+  <div class="section-eyebrow">EXPORT · CLIENT-SIDE GENERATION · NO SERVER</div>
+  <div class="section-title" style="margin-bottom:32px">Export</div>
+  <div class="export-grid">
+    <button class="exp-btn" onclick="flashDone(this,'DOWNLOADED')"><span class="exp-lbl">MARKDOWN</span><span class="exp-sub">.md · GitHub ready</span></button>
+    <button class="exp-btn" onclick="flashDone(this,'DOWNLOADED')"><span class="exp-lbl" style="color:var(--ice)">CSV</span><span class="exp-sub">.csv · Spreadsheet</span></button>
+    <button class="exp-btn" onclick="flashDone(this,'DOWNLOADED')"><span class="exp-lbl" style="color:var(--violet)">JSON</span><span class="exp-sub">.json · Raw data</span></button>
+    <button class="exp-btn" onclick="flashDone(this,'COPIED')"><span class="exp-lbl" style="color:var(--gold)">COPY LINK</span><span class="exp-sub">Share this app</span></button>
+  </div>
+  <div style="margin-top:20px;font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.15);letter-spacing:.12em;line-height:1.9">
+    ALL FILES GENERATED CLIENT-SIDE IN YOUR BROWSER.<br>NOTHING SENT TO ANY SERVER. EVERYTHING IS YOURS.
+  </div>
+</div>
+
+<!-- SCANNER OVERLAY -->
+<div id="scanner">
+  <div class="scan-window">
+    <div class="scan-bar" style="background:#0f0f14;border-bottom:1px solid rgba(255,255,255,.05)">
+      <div class="t-dot" style="background:#ff5f57"></div>
+      <div class="t-dot" style="background:#ffbd2e"></div>
+      <div class="t-dot" style="background:#28c840"></div>
+      <span class="term-title" style="margin-left:10px">devopspath — resume-parser</span>
+    </div>
+    <div class="scan-body" id="scan-body" style="background:#0a0a0f"></div>
+  </div>
+</div>
+
+<footer>
+  <span>DEVOPSPATH — ALL DATA LOCAL — NO SERVERS — NO TRACKING</span>
+  <a href="https://github.com" target="_blank">GITHUB ↗</a>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════
+//  0. GLOBALS
+// ═══════════════════════════════════════════
+let mx=window.innerWidth/2, my=window.innerHeight/2;
+let rmx=mx, rmy=my; // lagged ring position
+const DOT  = document.getElementById('cur-dot');
+const RING = document.getElementById('cur-ring');
+
+// ═══════════════════════════════════════════
+//  1. CURSOR + TRAIL
+// ═══════════════════════════════════════════
+const TRAIL_COUNT = 14;
+const trails = Array.from({length:TRAIL_COUNT}, (_,i) => {
+  const d = document.createElement('div');
+  d.className = 'cursor-trail';
+  const ratio = i/TRAIL_COUNT;
+  d.style.cssText = `width:${4-ratio*2.5}px;height:${4-ratio*2.5}px;background:rgba(255,${80+Math.floor(ratio*120)},${Math.floor(ratio*40)},${0.6-ratio*0.5});z-index:${99990-i}`;
+  document.body.appendChild(d);
+  return {el:d, x:mx, y:my};
+});
+
+window.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+
+(function trailLoop() {
+  // ring lags behind
+  rmx += (mx - rmx) * 0.1;
+  rmy += (my - rmy) * 0.1;
+  DOT.style.left  = mx+'px';
+  DOT.style.top   = my+'px';
+  RING.style.left = rmx+'px';
+  RING.style.top  = rmy+'px';
+
+  // chain trail
+  let px=mx, py=my;
+  trails.forEach((t,i) => {
+    t.x += (px - t.x) * (0.28 - i*0.012);
+    t.y += (py - t.y) * (0.28 - i*0.012);
+    t.el.style.left  = t.x+'px';
+    t.el.style.top   = t.y+'px';
+    t.el.style.opacity = 1 - i/TRAIL_COUNT;
+    px=t.x; py=t.y;
+  });
+
+  requestAnimationFrame(trailLoop);
+})();
+
+// cursor expand on interactive element
+document.addEventListener('mouseover', e => {
+  const el = e.target;
+  const isMag = el.closest('[data-mag]') || el.closest('[data-mag-soft]') || el.tagName==='BUTTON' || el.tagName==='A' || el.closest('.phase-row') || el.closest('.insight-card');
+  if (isMag) {
+    RING.style.width  = '60px';
+    RING.style.height = '60px';
+    RING.style.borderColor = 'var(--ember)';
+  } else {
+    RING.style.width  = '36px';
+    RING.style.height = '36px';
+    RING.style.borderColor = 'rgba(255,255,255,0.5)';
+  }
+});
+
+// ═══════════════════════════════════════════
+//  2. CINEMATIC BG CANVAS
+// ═══════════════════════════════════════════
+(function() {
+  const cv = document.getElementById('bg-canvas');
+  const ctx = cv.getContext('2d');
+  let W, H, t = 0;
+  const COLS = ['#ff4500','#00ff88','#00d4ff','#7c3aed','#f5c842'];
+  const resize = () => { W=cv.width=innerWidth; H=cv.height=innerHeight; };
+  resize(); window.addEventListener('resize', resize);
+
+  const stars = Array.from({length:150}, () => ({
+    x:Math.random(), y:Math.random(), z:Math.random(),
+    vz:.0008+Math.random()*.0025, col:COLS[0|Math.random()*5], sz:1+Math.random()*2
+  }));
+  const codeLines = [
+    'kubectl apply -f ./manifests','terraform plan --out tfplan',
+    'docker build -t app:latest .','helm upgrade --install my-app',
+    'aws eks update-kubeconfig','prometheus --config.file=prom.yml',
+    'git push origin main','argocd app sync production',
+    'ansible-playbook site.yml','trivy image my-app:latest',
+  ].map(t=>({t,x:Math.random(),y:Math.random(),op:.04+Math.random()*.06,sp:.00006+Math.random()*.00008,sz:10+Math.random()*4}));
+
+  function draw() {
+    requestAnimationFrame(draw); t+=.004;
+    ctx.fillStyle='rgba(6,6,10,0.2)';
+    ctx.fillRect(0,0,W,H);
+
+    // perspective grid
+    const vx=W*(0.3+mx/W*.4), vy=H*(0.25+my/H*.35);
+    for(let i=0;i<=22;i++){
+      const u=i/22, ey=H*.82, ly=ey+(u-.5)*H*.32;
+      ctx.beginPath(); ctx.moveTo(vx,vy); ctx.lineTo(0,ly);
+      ctx.strokeStyle=`rgba(255,69,0,${.025+u*.035})`; ctx.lineWidth=.5; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(vx,vy); ctx.lineTo(W,ly);
+      ctx.strokeStyle=`rgba(255,69,0,${.025+u*.035})`; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(vx,vy); ctx.lineTo(u*W, ey+(u-.5)*H*.1);
+      ctx.strokeStyle=`rgba(0,212,255,${.012+u*.016})`; ctx.lineWidth=.3; ctx.stroke();
+    }
+
+    // floating devops commands
+    codeLines.forEach(l=>{
+      l.y-=l.sp; if(l.y<-.06){l.y=1.06;l.x=Math.random();}
+      ctx.font=`${l.sz}px 'JetBrains Mono',monospace`;
+      ctx.fillStyle=`rgba(0,255,136,${l.op})`;
+      ctx.fillText(l.t, l.x*W, l.y*H);
+    });
+
+    // star-field zoom
+    stars.forEach(p=>{
+      p.z+=p.vz; if(p.z>1){p.z=0;p.x=Math.random();p.y=Math.random();}
+      const px=(p.x-.5)/(1-p.z)+.5, py=(p.y-.5)/(1-p.z)+.5;
+      if(px<0||px>1||py<0||py>1) return;
+      const r=Math.max(.4,p.sz*p.z*2);
+      ctx.beginPath(); ctx.arc(px*W,py*H,r,0,Math.PI*2);
+      ctx.fillStyle=p.col+Math.floor(p.z*255).toString(16).padStart(2,'0');
+      ctx.fill();
+    });
+
+    // central breathing orb
+    const ox=W*.5+Math.sin(t*.45)*W*.06, oy=H*.42+Math.cos(t*.3)*H*.05;
+    const g=ctx.createRadialGradient(ox,oy,0,ox,oy,Math.min(W,H)*.28);
+    g.addColorStop(0,'rgba(255,69,0,.14)'); g.addColorStop(.5,'rgba(124,58,237,.07)'); g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+    // scanline
+    const sy=(t*160)%H;
+    const sg=ctx.createLinearGradient(0,sy-80,0,sy+2);
+    sg.addColorStop(0,'rgba(0,255,136,0)'); sg.addColorStop(1,'rgba(0,255,136,.035)');
+    ctx.fillStyle=sg; ctx.fillRect(0,sy-80,W,82);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════
+//  3. ANTIGRAVITY PARTICLE SYSTEM
+//     Particles flee from cursor — real physics
+// ═══════════════════════════════════════════
+(function() {
+  const cv = document.getElementById('particle-canvas');
+  const ctx = cv.getContext('2d');
+  let W, H;
+  const resize = () => { W=cv.width=innerWidth; H=cv.height=innerHeight; };
+  resize(); window.addEventListener('resize', resize);
+
+  const PARTICLE_COUNT = 200;
+  const COLORS = ['#ff4500','#00ff88','#00d4ff','#7c3aed','#f5c842','#ff2d6b'];
+  const SYMBOLS = ['◆','○','◇','△','▷','◎','⬡','◈'];
+
+  const particles = Array.from({length:PARTICLE_COUNT}, () => ({
+    x: Math.random() * innerWidth,
+    y: Math.random() * innerHeight,
+    ox: 0, oy: 0,  // origin (for return force)
+    vx: 0, vy: 0,
+    r: 1 + Math.random() * 2.5,
+    col: COLORS[0|Math.random()*COLORS.length],
+    mass: 0.4 + Math.random() * 0.8,
+  }));
+
+  // set origins
+  particles.forEach(p => { p.ox=p.x; p.oy=p.y; });
+
+  const REPEL_DIST = 140;
+  const REPEL_FORCE = 0.6;
+  const RETURN_FORCE = 0.025;
+  const FRICTION = 0.88;
+
+  function draw() {
+    requestAnimationFrame(draw);
+    ctx.clearRect(0,0,W,H);
+
+    particles.forEach(p => {
+      const dx = mx - p.x, dy = my - p.y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+
+      if (dist < REPEL_DIST && dist > 0) {
+        // antigravity: push away from cursor, stronger when closer
+        const force = (REPEL_DIST - dist) / REPEL_DIST * REPEL_FORCE;
+        p.vx -= (dx/dist) * force / p.mass;
+        p.vy -= (dy/dist) * force / p.mass;
+      }
+
+      // spring back to origin
+      p.vx += (p.ox - p.x) * RETURN_FORCE;
+      p.vy += (p.oy - p.y) * RETURN_FORCE;
+
+      // friction
+      p.vx *= FRICTION;
+      p.vy *= FRICTION;
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // glow
+      ctx.shadowColor = p.col;
+      ctx.shadowBlur  = dist < REPEL_DIST ? 12 * (1 - dist/REPEL_DIST) : 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r + (dist<REPEL_DIST ? p.r*(1-dist/REPEL_DIST)*2 : 0), 0, Math.PI*2);
+      ctx.fillStyle = p.col + (dist < REPEL_DIST ? 'ff' : '55');
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════
+//  4. HERO CHAR REVEAL (staggered)
+// ═══════════════════════════════════════════
+const HERO_LINES = ['YOUR', 'CLOUD', 'PATH.'];
+const HOLLOW_IDX = 1; // 'CLOUD' is hollow
+const hero = document.getElementById('hero-title');
+HERO_LINES.forEach((line, li) => {
+  const lineDiv = document.createElement('div');
+  lineDiv.style.display='block';
+  if (li===HOLLOW_IDX) lineDiv.classList.add('hollow');
+
+  [...line].forEach((ch, ci) => {
+    const delay = (li*6 + ci) * 0.04 + 0.4;
+    const wrap = document.createElement('span');
+    wrap.className = 'char-wrap';
+    const inner = document.createElement('span');
+    inner.className = 'char-inner';
+    inner.style.animationDelay = delay+'s';
+    inner.textContent = ch==' ' ? '\u00a0' : ch;
+    if (li===HOLLOW_IDX) inner.style.webkitTextStroke='1px rgba(255,255,255,0.22)';
+    wrap.appendChild(inner);
+    lineDiv.appendChild(wrap);
+  });
+
+  // add a space between words on same line
+  lineDiv.insertAdjacentHTML('beforeend','<br>');
+  hero.appendChild(lineDiv);
+});
+
+// ═══════════════════════════════════════════
+//  5. MAGNETIC BUTTON + SOFT MAGNETIC STATS
+// ═══════════════════════════════════════════
+document.querySelectorAll('[data-mag]').forEach(el => {
+  el.addEventListener('mousemove', e => {
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width/2, cy = r.top + r.height/2;
+    const dx = e.clientX-cx, dy = e.clientY-cy;
+    el.style.transform = `translate(${dx*.35}px,${dy*.35}px)`;
+    const glow = el.querySelector('.mag-btn-glow');
+    if(glow){glow.style.left=(e.clientX-r.left)+'px'; glow.style.top=(e.clientY-r.top)+'px';}
+  });
+  el.addEventListener('mouseleave', () => {
+    el.style.transform='translate(0,0)';
+  });
+});
+
+document.querySelectorAll('[data-mag-soft]').forEach(el => {
+  el.addEventListener('mousemove', e => {
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width/2, cy = r.top + r.height/2;
+    el.style.transform = `translate(${(e.clientX-cx)*.15}px,${(e.clientY-cy)*.15}px)`;
+  });
+  el.addEventListener('mouseleave', () => { el.style.transform=''; });
+});
+
+// ═══════════════════════════════════════════
+//  6. 3D TILT CARD + CURSOR GLOW
+// ═══════════════════════════════════════════
+const tiltCard = document.getElementById('tilt-card');
+tiltCard.addEventListener('mousemove', e => {
+  const r = tiltCard.getBoundingClientRect();
+  const px = (e.clientX-r.left)/r.width;
+  const py = (e.clientY-r.top)/r.height;
+  const rx = (py-.5)*22;  // rotate X
+  const ry = (.5-px)*22;  // rotate Y
+
+  tiltCard.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.02)`;
+  tiltCard.style.boxShadow = `${-ry/2}px ${rx/2}px 40px rgba(255,69,0,0.25), 0 20px 60px rgba(0,0,0,.6)`;
+
+  // update CSS vars for radial glow
+  tiltCard.style.setProperty('--mx', (px*100)+'%');
+  tiltCard.style.setProperty('--my', (py*100)+'%');
+});
+tiltCard.addEventListener('mouseleave', () => {
+  tiltCard.style.transform='perspective(900px) rotateX(0) rotateY(0) scale(1)';
+  tiltCard.style.boxShadow='none';
+});
+
+// RIPPLE on click
+document.querySelectorAll('.upload-dropzone').forEach(el => {
+  el.addEventListener('click', e => {
+    const r=el.getBoundingClientRect();
+    const rip=document.createElement('div');
+    rip.className='ripple';
+    rip.style.cssText=`left:${e.clientX-r.left}px;top:${e.clientY-r.top}px;width:40px;height:40px;margin:-20px`;
+    el.appendChild(rip);
+    setTimeout(()=>rip.remove(),700);
+  });
+});
+
+// ═══════════════════════════════════════════
+//  7. AG SECTION PARTICLE FIELD (section-local)
+// ═══════════════════════════════════════════
+(function() {
+  const cv = document.getElementById('ag-canvas');
+  const ctx = cv.getContext('2d');
+  let W, H;
+  const sec = document.getElementById('ag-section');
+
+  function resize() {
+    const r=sec.getBoundingClientRect();
+    W=cv.width=sec.offsetWidth; H=cv.height=sec.offsetHeight;
+  }
+  resize(); window.addEventListener('resize', resize);
+
+  const N = 120;
+  const C = ['#ff4500','#00ff88','#00d4ff','#7c3aed'];
+  const pts = Array.from({length:N}, () => ({
+    x:Math.random()*1200, y:Math.random()*800,
+    ox:0, oy:0, vx:0, vy:0,
+    r:1.2+Math.random()*1.8, col:C[0|Math.random()*4]
+  }));
+  pts.forEach(p=>{p.ox=p.x;p.oy=p.y;});
+
+  function draw() {
+    requestAnimationFrame(draw);
+    W=sec.offsetWidth; H=sec.offsetHeight;
+    cv.width=W; cv.height=H;
+    ctx.clearRect(0,0,W,H);
+
+    const sec_r = sec.getBoundingClientRect();
+    const lx = mx - sec_r.left;
+    const ly = my - sec_r.top;
+    const RDIST=160, RF=0.9;
+
+    pts.forEach(p=>{
+      const dx=lx-p.x, dy=ly-p.y, d=Math.sqrt(dx*dx+dy*dy);
+      if(d<RDIST && d>0){
+        const f=(RDIST-d)/RDIST*RF;
+        p.vx-=(dx/d)*f; p.vy-=(dy/d)*f;
+      }
+      p.vx+=(p.ox-p.x)*.02; p.vy+=(p.oy-p.y)*.02;
+      p.vx*=.85; p.vy*=.85;
+      p.x+=p.vx; p.y+=p.vy;
+
+      const distR=Math.sqrt((lx-p.x)**2+(ly-p.y)**2);
+      ctx.shadowColor=p.col;
+      ctx.shadowBlur=distR<RDIST?16*(1-distR/RDIST):0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r+(distR<RDIST?p.r*(1-distR/RDIST)*3:0),0,Math.PI*2);
+      ctx.fillStyle=p.col+(distR<RDIST?'ff':'44');
+      ctx.fill(); ctx.shadowBlur=0;
+
+      // draw connections
+      pts.forEach(q=>{
+        const dd=Math.sqrt((p.x-q.x)**2+(p.y-q.y)**2);
+        if(dd<90&&dd>0){
+          ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+          ctx.strokeStyle=`rgba(255,69,0,${(1-dd/90)*.08})`; ctx.lineWidth=.5; ctx.stroke();
+        }
+      });
+    });
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════
+//  8. TICKER
+// ═══════════════════════════════════════════
+const TAGS=['LINUX','DOCKER','KUBERNETES','TERRAFORM','AWS','GCP','AZURE','CI/CD','PROMETHEUS','GRAFANA','ANSIBLE','VAULT','ISTIO','ARGO CD','HELM','GITOPS','TRIVY','FALCO','OPA','LOKI','JAEGER','OPEN TELEMETRY'];
+const tk=document.getElementById('ticker');
+[...TAGS,...TAGS].forEach(tag=>{
+  const s=document.createElement('span');
+  s.style.cssText='font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.16);letter-spacing:.18em;padding:0 24px;flex-shrink:0';
+  s.textContent=tag; tk.appendChild(s);
+  const dot=document.createElement('span');
+  dot.style.cssText='color:var(--ember);font-size:10px;opacity:.3;flex-shrink:0';
+  dot.textContent='·'; tk.appendChild(dot);
+});
+
+// ═══════════════════════════════════════════
+//  9. COUNTERS
+// ═══════════════════════════════════════════
+function countUp(el,to,suffix='',dur=1600){
+  let s=null;
+  const step=ts=>{if(!s)s=ts; const p=Math.min((ts-s)/dur,1); el.textContent=Math.floor(p*p*to)+(p>=1?suffix:''); if(p<1)requestAnimationFrame(step);};
+  setTimeout(()=>requestAnimationFrame(step),600);
+}
+countUp(document.getElementById('cnt-phases'),8);
+countUp(document.getElementById('cnt-topics'),15,'+');
+countUp(document.getElementById('cnt-res'),100,'+');
+
+// ═══════════════════════════════════════════
+//  10. AUTO-TYPING TERMINAL
+// ═══════════════════════════════════════════
+const TERM_SCRIPT=[
+  {t:200,  cls:'tline-prompt',  txt:'devopspath@ai:~$'},
+  {t:600,  cls:'tline-cmd',     txt:' ./analyze-resume.sh arjun_resume.pdf'},
+  {t:1200, cls:'tline-out',     txt:'[✓] PDF text extracted (3,847 chars)'},
+  {t:1700, cls:'tline-high',    txt:'[→] Running keyword lattice scan...'},
+  {t:2100, cls:'tline-out',     txt:'[✓] DETECTED: docker, kubernetes, aws, python, linux, git'},
+  {t:2600, cls:'tline-high',    txt:'[→] Mapping to 15 roadmap nodes...'},
+  {t:3000, cls:'tline-out',     txt:'[✓] Known topics: 6/15 | Partial: 2/15 | Todo: 7/15'},
+  {t:3500, cls:'tline-warn',    txt:'[i] Experience level: MID (3y detected via regex)'},
+  {t:4000, cls:'tline-high',    txt:'[→] Inferring learning style from corpus...'},
+  {t:4400, cls:'tline-out',     txt:'[✓] Style: HANDS-ON (keywords: built, deployed, implemented)'},
+  {t:4900, cls:'tline-high',    txt:'[→] Generating personalized topology...'},
+  {t:5300, cls:'tline-out',     txt:'[✓] Start phase: Phase 1 (Foundations)'},
+  {t:5700, cls:'tline-out',     txt:'[✓] Quick wins: Networking Fundamentals, AWS'},
+  {t:6100, cls:'tline-high',    txt:'[→] Persisting session to IndexedDB...'},
+  {t:6500, cls:'tline-out',     txt:'[✓] Session #1 saved (4.2KB) — local only, zero servers'},
+  {t:7000, cls:'tline-done',    txt:'[✓] ROADMAP COMPILED SUCCESSFULLY'},
+  {t:7300, cls:'tline-warn',    txt:'[i] CKA → AWS SAA → Terraform Associate recommended'},
+  {t:7700, cls:'tline-high',    txt:'[→] Estimated completion: ~31 weeks @ 2h/day'},
+  {t:8100, cls:'tline-prompt',  txt:'devopspath@ai:~$ '},
+];
+
+(function runTerminal() {
+  const body = document.getElementById('term-body');
+  body.innerHTML='<span class="t-cursor-blink"></span>';
+  let lines=[];
+
+  TERM_SCRIPT.forEach((entry,i)=>{
+    setTimeout(()=>{
+      const span=document.createElement('span');
+      span.className='tline '+entry.cls;
+      span.textContent=entry.txt;
+      body.insertBefore(span, body.lastChild);
+      if(i===TERM_SCRIPT.length-1){
+        const cursor=document.createElement('span');
+        cursor.className='t-cursor-blink'; body.appendChild(cursor);
+      }
+      body.scrollTop=body.scrollHeight;
+    }, entry.t);
+  });
+
+  // loop after completion
+  setTimeout(runTerminal, 12000);
+})();
+
+// ═══════════════════════════════════════════
+//  11. ROADMAP PREVIEW DATA + RENDER
+// ═══════════════════════════════════════════
+const PHASES=[
+  {icon:'🏗️',n:'Foundations',     col:'#6366f1',wk:4, pct:75, st:'partial',topics:['Linux & Shell Scripting','Networking Fundamentals','Git & Version Control','Python & Scripting']},
+  {icon:'🐳',n:'Containers',       col:'#0ea5e9',wk:5, pct:50, st:'partial',topics:['Docker & Containerization','Kubernetes (K8s)']},
+  {icon:'🔄',n:'CI/CD Pipelines',  col:'#10b981',wk:4, pct:0,  st:'todo',   topics:['CI/CD & GitOps']},
+  {icon:'📜',n:'IaC',              col:'#f59e0b',wk:4, pct:0,  st:'todo',   topics:['Terraform & IaC','Ansible']},
+  {icon:'☁️',n:'Cloud Platforms',  col:'#8b5cf6',wk:8, pct:25, st:'partial',topics:['AWS','GCP','Azure']},
+  {icon:'📊',n:'Observability',    col:'#ef4444',wk:3, pct:0,  st:'todo',   topics:['Prometheus · Grafana · Loki']},
+  {icon:'🔐',n:'DevSecOps',        col:'#ec4899',wk:3, pct:0,  st:'todo',   topics:['Trivy · Vault · OPA']},
+  {icon:'🚀',n:'SRE & Advanced',   col:'#14b8a6',wk:4, pct:0,  st:'todo',   topics:['SRE','Certifications']},
+];
+const SKILLS=[
+  {l:'Linux',pct:95,c:'var(--neon)'},{l:'Docker',pct:95,c:'var(--neon)'},{l:'Git',pct:90,c:'var(--neon)'},
+  {l:'AWS',pct:50,c:'var(--gold)'},{l:'Networking',pct:50,c:'var(--gold)'},{l:'K8s',pct:8,c:'rgba(255,255,255,.2)'},
+  {l:'CI/CD',pct:8,c:'rgba(255,255,255,.2)'},{l:'Terraform',pct:8,c:'rgba(255,255,255,.2)'},
+  {l:'Monitoring',pct:8,c:'rgba(255,255,255,.2)'},{l:'Security',pct:8,c:'rgba(255,255,255,.2)'},
+];
+const INSIGHTS=[
+  {tag:'STRENGTH',c:'var(--neon)',  acc:'rgba(0,255,136,.1)',  title:'6 Topics Already Mapped',              body:"You're ahead of ~80% of engineers starting this path. Known skills are anchors — build outward, not backwards."},
+  {tag:'SHORTCUT',c:'var(--ice)',   acc:'rgba(0,212,255,.1)',  title:'Skip Phase 1 Programming',             body:'You write code — jump straight to Docker → K8s → CI/CD → Cloud. Coding background makes the curve 3× faster.'},
+  {tag:'STYLE',   c:'var(--violet)',acc:'rgba(124,58,237,.1)', title:'Hands-On Builder Detected',           body:'Resume shows "built", "deployed", "implemented". Start every topic with Projects, not docs.'},
+  {tag:'QUICK WIN',c:'var(--ember)',acc:'rgba(255,69,0,.1)',   title:'Start: "Networking Fundamentals"',     body:'Partially known — completing today adds 225 XP and unblocks all AWS networking. Highest ROI right now.'},
+  {tag:'TIMELINE',c:'var(--gold)',  acc:'rgba(245,200,66,.1)', title:'~31 Weeks to Job-Ready',               body:'2-3 focused hours daily. The compound effect hits hard at week 8 — most people quit at week 4. Don\'t.'},
+];
+const SESSIONS=[
+  {n:'Arjun Sharma', meta:'MID · Backend Dev',  tp:6,  w:31, lv:'Lv.5 Cloud Architect'},
+  {n:'Priya Nair',   meta:'JR · Frontend Dev',  tp:2,  w:35, lv:'Lv.2 Container Pilot'},
+  {n:'Rohan Gupta',  meta:'SR · DevOps/Cloud',  tp:11, w:18, lv:'Lv.7 SRE Guardian'},
+];
+
+// skill strip
+const skillStrip=document.getElementById('skill-strip');
+SKILLS.forEach((s,i)=>{
+  const el=document.createElement('div'); el.className='skill-item';
+  el.innerHTML=`<div class="skill-label"><span class="skill-lbl" style="color:rgba(255,255,255,.28)">${s.l.toUpperCase()}</span><span class="skill-pct" style="color:${s.c}">${s.pct}%</span></div><div class="skill-track"><div class="skill-fill" style="width:${s.pct}%;background:${s.c};animation-delay:${i*.1}s;box-shadow:${s.pct>80?`0 0 8px ${s.c}`:'none'}"></div></div>`;
+  skillStrip.appendChild(el);
+});
+
+// phases
+const phasesList=document.getElementById('phases-list');
+PHASES.forEach((ph,i)=>{
+  const pCol=ph.pct===100?'var(--neon)':ph.pct>0?'var(--gold)':'rgba(255,255,255,.2)';
+  const sLbl=ph.pct===100?'COMPLETE':ph.pct>0?'IN PROGRESS':'NOT STARTED';
+  const sBdr=ph.pct===100?'rgba(0,255,136,.4)':ph.pct>0?'rgba(245,200,66,.4)':'rgba(255,255,255,.18)';
+
+  const row=document.createElement('div'); row.className='phase-row';
+  row.innerHTML=`
+    <span class="phase-icon">${ph.icon}</span>
+    <div class="phase-meta">
+      <div class="phase-name">${ph.n}</div>
+      <div class="phase-sub">${ph.topics.length} TOPICS · ~${ph.wk}W${i===0?' · START HERE':''}</div>
+    </div>
+    <div class="phase-prog">
+      <div style="display:flex;justify-content:space-between"><span style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,.2);letter-spacing:.1em">${ph.pct}%</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${ph.pct}%;background:${pCol};box-shadow:${ph.pct>80?`0 0 8px ${pCol}`:'none'}"></div></div>
+    </div>
+    <span class="phase-badge" style="color:${pCol};border-color:${sBdr}">${sLbl}</span>
+    <span class="phase-chev">▼</span>
+  `;
+
+  // expand topics on click
+  let open=false;
+  const topicsDiv=document.createElement('div');
+  topicsDiv.style.cssText='display:none;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;padding:12px 0 20px 38px';
+  ph.topics.forEach(tname=>{
+    const statusDot=tname.includes('Scripting')||tname.includes('Docker')||tname.includes('Git')?'var(--neon)':tname.includes('Networking')||tname.includes('AWS')?'var(--gold)':'rgba(255,255,255,.2)';
+    const card=document.createElement('div');
+    card.style.cssText='padding:14px 16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);transition:background .15s,transform .2s;cursor:pointer';
+    card.innerHTML=`<div style="display:flex;gap:10px;align-items:flex-start"><div style="width:6px;height:6px;border-radius:50%;background:${statusDot};margin-top:5px;flex-shrink:0;box-shadow:${statusDot!=='rgba(255,255,255,.2)'?`0 0 6px ${statusDot}`:'none'}"></div><div style="font-size:13px;font-weight:600;color:rgba(255,255,255,.82)">${tname}</div></div>`;
+    card.onmouseenter=()=>{card.style.background='rgba(255,255,255,.05)';card.style.transform='translateX(4px)';};
+    card.onmouseleave=()=>{card.style.background='rgba(255,255,255,.02)';card.style.transform='';};
+    topicsDiv.appendChild(card);
+  });
+
+  row.onclick=()=>{
+    open=!open;
+    topicsDiv.style.display=open?'grid':'none';
+    row.querySelector('.phase-chev').style.transform=open?'rotate(180deg)':'none';
+  };
+
+  phasesList.appendChild(row);
+  phasesList.appendChild(topicsDiv);
+});
+
+// insights horizontal scroll
+const is=document.getElementById('insight-scroll');
+INSIGHTS.forEach(ins=>{
+  const card=document.createElement('div'); card.className='insight-card';
+  card.style.cssText+=`border-top:2px solid ${ins.c};`;
+  card.querySelector && null;
+  card.innerHTML=`<div class="insight-card" style="flex:0 0 340px;padding:24px;border:1px solid rgba(255,255,255,.06);background:${ins.acc};border-top:2px solid ${ins.c};transition:transform .3s,box-shadow .3s"><span class="insight-tag" style="color:${ins.c}">${ins.tag}</span><div class="insight-title">${ins.title}</div><div class="insight-body">${ins.body}</div></div>`;
+  is.appendChild(card.firstElementChild||card);
+});
+
+// sessions
+const sl=document.getElementById('sessions-list');
+SESSIONS.forEach((s,i)=>{
+  const row=document.createElement('div'); row.className='session-row';
+  row.innerHTML=`
+    <div style="flex:1;min-width:0"><div class="s-name">${s.n}</div><div class="s-meta">${s.meta}</div></div>
+    <div class="s-stat"><div class="s-val" style="color:var(--neon)">${s.tp}</div><div class="s-lbl">TOPICS</div></div>
+    <div class="s-stat"><div class="s-val" style="color:var(--gold)">${s.w}w</div><div class="s-lbl">TIMELINE</div></div>
+    <div class="s-stat"><div class="s-val" style="color:var(--violet);font-size:12px">${s.lv}</div><div class="s-lbl">RANK</div></div>
+    <button class="del-btn" onclick="this.closest('.session-row').style.opacity='.25'">DELETE</button>
+  `;
+  sl.appendChild(row);
+});
+
+// ═══════════════════════════════════════════
+//  12. SCANNER ANIMATION
+// ═══════════════════════════════════════════
+const SCAN_LINES=[
+  {t:0,   col:'rgba(255,255,255,.45)', txt:'> INITIALIZING RESUME PARSER v4.2.0'},
+  {t:280, col:'rgba(255,255,255,.35)', txt:'> EXTRACTING RAW TEXT CORPUS…'},
+  {t:580, col:'rgba(0,212,255,.75)',   txt:'> RUNNING KEYWORD LATTICE SCAN'},
+  {t:860, col:'rgba(0,255,136,.9)',    txt:'> DETECTED: docker kubernetes aws python linux git'},
+  {t:1120,col:'rgba(0,212,255,.75)',   txt:'> MAPPING SKILL GRAPH → 15 NODES'},
+  {t:1380,col:'rgba(255,255,255,.35)', txt:'> INFERRING EXPERIENCE VECTOR — MID LEVEL'},
+  {t:1640,col:'rgba(124,58,237,.9)',   txt:'> GENERATING PERSONALIZED TOPOLOGY'},
+  {t:1900,col:'rgba(255,255,255,.35)', txt:'> PERSISTING SESSION → IndexedDB (4.2KB)'},
+  {t:2160,col:'rgba(0,255,136,1)',     txt:'> ROADMAP COMPILED ✓'},
+];
+
+function triggerScan(el) {
+  const scanner=document.getElementById('scanner');
+  const body=document.getElementById('scan-body');
+  scanner.style.display='flex';
+  body.innerHTML='';
+
+  SCAN_LINES.forEach((l,i)=>{
+    setTimeout(()=>{
+      const d=document.createElement('div');
+      d.className='sl';
+      d.style.cssText=`color:${l.col};animation-delay:${i*.03}s;font-family:var(--fm);font-size:12px;margin-bottom:8px;letter-spacing:.04em`;
+      d.textContent=l.txt;
+      body.appendChild(d);
+      body.scrollTop=body.scrollHeight;
+      if(i===SCAN_LINES.length-1){
+        setTimeout(()=>{
+          scanner.style.display='none';
+          fireConfetti();
+          document.getElementById('card-stats').style.display='flex';
+          document.getElementById('drop-text').textContent='— ANALYSIS COMPLETE —';
+          setTimeout(()=>showRoadmap(),400);
+        },500);
+      }
+    },l.t);
+  });
+}
+
+function showAGSection() {
+  document.getElementById('ag-section').scrollIntoView({behavior:'smooth'});
+}
+
+function showRoadmap() {
+  document.getElementById('roadmap-section').scrollIntoView({behavior:'smooth'});
+}
+
+function goTop() {
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════
+//  13. CONFETTI
+// ═══════════════════════════════════════════
+function fireConfetti() {
+  const COLS=['#ff4500','#00ff88','#00d4ff','#7c3aed','#f5c842','#ff2d6b','#fff'];
+  for(let i=0;i<90;i++){
+    setTimeout(()=>{
+      const p=document.createElement('div');
+      p.className='confetti-piece';
+      const x=(Math.random()-.5)*window.innerWidth*1.4+'px';
+      const y=(Math.random()+.2)*window.innerHeight+'px';
+      const r=(Math.random()*1080)+'deg';
+      p.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${COLS[0|Math.random()*COLS.length]};--cx:${x};--cy:${y};--cr:${r};animation-duration:${1.2+Math.random()*.8}s`;
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(),2000);
+    },i*18);
+  }
+}
+
+// ═══════════════════════════════════════════
+//  14. SCROLL-LINKED SECTION TITLE
+// ═══════════════════════════════════════════
+const agTitle=document.getElementById('ag-title');
+const secName=document.getElementById('sec-name');
+const LEVEL_TITLES=['Script Kiddie','Shell Ranger','Container Pilot','K8s Cadet','Pipeline Artisan','Cloud Architect','IaC Wizard','SRE Guardian'];
+let ltIdx=0;
+setInterval(()=>{
+  ltIdx=(ltIdx+1)%LEVEL_TITLES.length;
+  secName.style.opacity='0';
+  setTimeout(()=>{secName.textContent=LEVEL_TITLES[ltIdx];secName.style.opacity='1';},300);
+},2200);
+secName.style.transition='opacity .3s';
+
+// ═══════════════════════════════════════════
+//  15. INSIGHT SCROLL — drag to scroll
+// ═══════════════════════════════════════════
+const insightScroll=document.getElementById('insight-scroll');
+if(insightScroll){
+  let isDown=false,startX,scrollLeft;
+  insightScroll.addEventListener('mousedown',e=>{isDown=true;startX=e.pageX-insightScroll.offsetLeft;scrollLeft=insightScroll.scrollLeft;});
+  insightScroll.addEventListener('mouseleave',()=>isDown=false);
+  insightScroll.addEventListener('mouseup',()=>isDown=false);
+  insightScroll.addEventListener('mousemove',e=>{if(!isDown)return;e.preventDefault();const x=e.pageX-insightScroll.offsetLeft;insightScroll.scrollLeft=scrollLeft-(x-startX)*1.5;});
+}
+
+// ═══════════════════════════════════════════
+//  16. EXPORT BUTTON FLASH
+// ═══════════════════════════════════════════
+function flashDone(btn,msg){
+  const lbl=btn.querySelector('.exp-lbl');
+  const orig=lbl.textContent;
+  lbl.textContent=`✓ ${msg}`;
+  btn.style.background='rgba(0,255,136,.12)'; btn.style.borderColor='rgba(0,255,136,.3)';
+  setTimeout(()=>{lbl.textContent=orig;btn.style.background='';btn.style.borderColor='';},2000);
+}
+
+// ═══════════════════════════════════════════
+//  17. INTERSECTION OBSERVER — entry animations
+// ═══════════════════════════════════════════
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.style.opacity='1';
+      entry.target.style.transform='none';
+      io.unobserve(entry.target);
+    }
+  });
+},{threshold:.12});
+
+document.querySelectorAll('.phase-row, .session-row, .exp-btn, .insight-card').forEach(el=>{
+  el.style.opacity='0';
+  el.style.transform='translateY(24px)';
+  el.style.transition='opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1)';
+  io.observe(el);
+});
+
+// Phase rows stagger
+document.querySelectorAll('.phase-row').forEach((el,i)=>{
+  el.style.transitionDelay=(i*.06)+'s';
+});
+document.querySelectorAll('.session-row').forEach((el,i)=>{
+  el.style.transitionDelay=(i*.07)+'s';
+});
+document.querySelectorAll('.exp-btn').forEach((el,i)=>{
+  el.style.transitionDelay=(i*.05)+'s';
+});
+</script>
+</body>
+</html>
