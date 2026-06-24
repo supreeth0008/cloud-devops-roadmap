@@ -19,9 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare portfolio files
+        run: |
+          mkdir -p site/images
+          cp index.html site/
+          cp -r images/*.png site/images/ || true
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./
+          path: ./site
 
   deploy:
     needs: build
