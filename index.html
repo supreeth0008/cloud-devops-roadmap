@@ -403,11 +403,11 @@ footer span{background:var(--gradient);-webkit-background-clip:text;-webkit-text
 </div>
 <div class="reveal">
 <div class="phase-tabs">
-<div class="phase-tab active" onclick="showPhase('phase1')">Phase 1 — Foundation</div>
-<div class="phase-tab" onclick="showPhase('phase2')">Phase 2 — Intermediate</div>
-<div class="phase-tab" onclick="showPhase('phase3')">Phase 3 — Advanced</div>
-<div class="phase-tab" onclick="showPhase('phase4')">Phase 4 — FAANG Level</div>
-<div class="phase-tab" onclick="showPhase('live')">Live Screenshots</div>
+<div class="phase-tab active" data-phase="phase1" onclick="showPhase('phase1')">Phase 1 — Foundation</div>
+<div class="phase-tab" data-phase="phase2" onclick="showPhase('phase2')">Phase 2 — Intermediate</div>
+<div class="phase-tab" data-phase="phase3" onclick="showPhase('phase3')">Phase 3 — Advanced</div>
+<div class="phase-tab" data-phase="phase4" onclick="showPhase('phase4')">Phase 4 — FAANG Level</div>
+<div class="phase-tab" data-phase="live" onclick="showPhase('live')">Live Screenshots</div>
 </div>
 <div class="phase-panel active" id="phase1">
 <div class="phase-content">
@@ -561,10 +561,10 @@ footer span{background:var(--gradient);-webkit-background-clip:text;-webkit-text
 </div>
 <div class="reveal">
 <div class="code-tabs">
-<div class="code-tab active" onclick="showCode('terraform')">terraform/main.tf</div>
-<div class="code-tab" onclick="showCode('hmac')">utils/hmac.js</div>
-<div class="code-tab" onclick="showCode('flask')">app/app.py</div>
-<div class="code-tab" onclick="showCode('events')">routes/events.js</div>
+<div class="code-tab active" data-code="terraform" onclick="showCode('terraform')">terraform/main.tf</div>
+<div class="code-tab" data-code="hmac" onclick="showCode('hmac')">utils/hmac.js</div>
+<div class="code-tab" data-code="flask" onclick="showCode('flask')">app/app.py</div>
+<div class="code-tab" data-code="events" onclick="showCode('events')">routes/events.js</div>
 </div>
 <div class="code-panel active" id="terraform">
 <div class="code-block">
@@ -947,7 +947,7 @@ dots.forEach(d=>{d.classList.toggle('active',d.dataset.section===current)});
 function showPhase(id){
 document.querySelectorAll('.phase-tab').forEach(t=>t.classList.remove('active'));
 document.querySelectorAll('.phase-panel').forEach(p=>p.classList.remove('active'));
-document.querySelector('.phase-tab[onclick="showPhase(''+id+'')"]').classList.add('active');
+document.querySelector('.phase-tab[data-phase="'+id+'"]').classList.add('active');
 document.getElementById(id).classList.add('active');
 }
 
@@ -955,7 +955,7 @@ document.getElementById(id).classList.add('active');
 function showCode(id){
 document.querySelectorAll('.code-tab').forEach(t=>t.classList.remove('active'));
 document.querySelectorAll('.code-panel').forEach(p=>p.classList.remove('active'));
-document.querySelector('.code-tab[onclick="showCode(''+id+'')"]').classList.add('active');
+document.querySelector('.code-tab[data-code="'+id+'"]').classList.add('active');
 document.getElementById(id).classList.add('active');
 }
 
