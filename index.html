@@ -1,26 +1,978 @@
-<!doctype html>
-<html lang="en" data-theme="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Personalized Cloud & DevOps Roadmap — Upload your resume and get an AI-powered, gamified learning path with curated resources, projects, skill radar, XP system, and certifications." />
-    <meta name="theme-color" content="#080c14" />
-    <meta property="og:title" content="⚡ DevOpsPath — Personalized Cloud & DevOps Roadmap" />
-    <meta property="og:description" content="Upload resume → Instant skill analysis → Gamified roadmap with XP, badges, skill radar, timeline, and export." />
-    <meta property="og:type" content="website" />
-    <!-- Preconnect to Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-    <title>⚡ DevOpsPath — Cloud & DevOps Roadmap Generator</title>
-    <style>
-      html, body, #root { height: 100%; }
-      body { margin: 0; background: #080c14; }
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supreeth Bhat | Cloud & DevOps Engineer</title>
+<meta name="description" content="Supreeth Bhat — Cloud & DevOps Engineer. Built a production-grade 4-phase DevOps platform from Flask to Kubernetes with ArgoCD, Vault, and chaos engineering.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#05070a;--bg2:#0c1117;--surface:#111827;--elevated:#1a2332;--primary:#00d4aa;--primary-dim:rgba(0,212,170,0.1);--accent:#06b6d4;--text:#f1f5f9;--text-muted:#94a3b8;--border:rgba(148,163,184,0.07);--gradient:linear-gradient(135deg,#00d4aa 0%,#06b6d4 50%,#6366f1 100%);--font:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;--r:16px;--t:0.35s cubic-bezier(0.4,0,0.2,1)}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+::selection{background:var(--primary);color:#000}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--surface);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+
+.preloader{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity 0.6s,visibility 0.6s}
+.preloader.hidden{opacity:0;visibility:hidden}
+.preloader-inner{text-align:center}
+.preloader-logo{font-size:3rem;font-weight:900;letter-spacing:-2px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.5rem}
+.preloader-bar{width:120px;height:3px;background:var(--surface);border-radius:2px;margin:0 auto;overflow:hidden}
+.preloader-fill{height:100%;width:0%;background:var(--gradient);border-radius:2px;animation:loadBar 1.2s ease forwards}
+@keyframes loadBar{0%{width:0%}50%{width:70%}100%{width:100%}}
+
+nav{position:fixed;top:0;width:100%;z-index:1000;transition:all var(--t)}
+nav.scrolled{background:rgba(5,7,10,0.9);backdrop-filter:blur(20px) saturate(1.5);border-bottom:1px solid var(--border)}
+.nav-container{max-width:1200px;margin:0 auto;padding:1.2rem 2rem;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:900;font-size:1.4rem;letter-spacing:-1px;color:var(--text)}
+.logo span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:2.5rem;list-style:none;align-items:center}
+.nav-links a{color:var(--text-muted);text-decoration:none;font-size:0.85rem;font-weight:500;letter-spacing:0.02em;transition:color var(--t);position:relative;padding:0.5rem 0}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--gradient);border-radius:2px;transition:width var(--t)}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.menu-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:1001}
+.menu-toggle span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:0.3s}
+.menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.menu-toggle.active span:nth-child(2){opacity:0}
+.menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+.section-dots{position:fixed;right:2rem;top:50%;transform:translateY(-50%);z-index:999;display:flex;flex-direction:column;gap:1rem}
+.section-dot{width:8px;height:8px;border-radius:50%;background:var(--border);border:1px solid rgba(148,163,184,0.2);cursor:pointer;transition:all var(--t);position:relative}
+.section-dot.active{background:var(--primary);border-color:var(--primary);box-shadow:0 0 12px rgba(0,212,170,0.4)}
+.section-dot::before{content:attr(data-label);position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:0.7rem;color:var(--text-muted);white-space:nowrap;opacity:0;transition:opacity 0.3s}
+.section-dot:hover::before{opacity:1}
+@media(max-width:768px){.section-dots{display:none}}
+
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:8rem 2rem 5rem}
+#heroCanvas{position:absolute;inset:0;z-index:0;opacity:0.5}
+.hero-content{max-width:850px;text-align:center;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:0.6rem;background:var(--primary-dim);border:1px solid rgba(0,212,170,0.2);color:var(--primary);padding:0.6rem 1.2rem;border-radius:100px;font-size:0.8rem;font-weight:600;margin-bottom:2rem;backdrop-filter:blur(10px);animation:fadeUp 0.8s ease both}
+.hero-badge .dot{width:8px;height:8px;background:var(--primary);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+.hero h1{font-size:clamp(2.8rem,7vw,5.5rem);font-weight:900;line-height:1.05;letter-spacing:-0.03em;margin-bottom:1.5rem;animation:fadeUp 0.8s ease 0.15s both}
+.hero h1 .gradient-text{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-tagline{font-size:clamp(1.1rem,2.5vw,1.4rem);color:var(--text-muted);max-width:640px;margin:0 auto 2.5rem;line-height:1.7;animation:fadeUp 0.8s ease 0.3s both;min-height:3em}
+.typing-cursor{display:inline-block;width:2px;height:1.2em;background:var(--primary);vertical-align:text-bottom;margin-left:3px;animation:blink 1s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.8s ease 0.45s both}
+.btn{display:inline-flex;align-items:center;gap:0.5rem;padding:1rem 2rem;border-radius:var(--r);font-weight:600;font-size:0.95rem;text-decoration:none;transition:all var(--t);cursor:pointer;border:none;position:relative;overflow:hidden;font-family:var(--font)}
+.btn-primary{background:var(--gradient);color:#000;box-shadow:0 8px 32px rgba(0,212,170,0.25)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,212,170,0.35)}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--primary);background:var(--primary-dim)}
+.hero-social{display:flex;gap:1rem;justify-content:center;margin-top:2.5rem;animation:fadeUp 0.8s ease 0.6s both}
+.hero-social a{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text-muted);transition:all var(--t)}
+.hero-social a:hover{color:var(--primary);border-color:var(--primary);transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,212,170,0.15)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+
+section{padding:7rem 2rem;position:relative}
+.container{max-width:1100px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:5rem}
+.section-header h2{font-size:clamp(2rem,5vw,2.8rem);font-weight:800;margin-bottom:1rem;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:0.75rem}
+.section-header h2 .icon{color:var(--primary);font-weight:400;opacity:0.8}
+.section-header p{color:var(--text-muted);font-size:1.05rem;max-width:520px;margin:0 auto;line-height:1.7}
+.divider{width:50px;height:4px;background:var(--gradient);border-radius:2px;margin:1.25rem auto 0;position:relative}
+.divider::after{content:'';position:absolute;inset:-2px;background:var(--gradient);border-radius:4px;opacity:0.3;filter:blur(4px)}
+
+.about-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:4rem;align-items:center}
+.about-photo{position:relative;max-width:280px;margin:0 auto}
+.about-photo-frame{width:100%;aspect-ratio:3/4;border-radius:var(--r);overflow:hidden;position:relative;box-shadow:0 24px 64px rgba(0,212,170,0.15);transition:transform 0.5s}
+.about-photo-frame:hover{transform:translateY(-4px)}
+.about-photo-frame img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.6s}
+.about-photo-frame:hover img{transform:scale(1.05)}
+.about-photo-frame::before{content:'';position:absolute;inset:0;border:1px solid rgba(0,212,170,0.15);border-radius:var(--r);z-index:2;pointer-events:none}
+.about-photo-glow{position:absolute;inset:-20px;background:var(--gradient);opacity:0.15;filter:blur(40px);border-radius:calc(var(--r)+20px);z-index:-1;animation:glowPulse 3s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{opacity:0.15}50%{opacity:0.25}}
+.about-info h3{font-size:1.6rem;margin-bottom:1rem;font-weight:700}
+.about-info>p{color:var(--text-muted);margin-bottom:1.25rem;line-height:1.8}
+.about-details{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem}
+.detail-item{display:flex;align-items:center;gap:0.75rem;font-size:0.9rem;padding:0.6rem 0;border-bottom:1px solid var(--border)}
+.detail-item .label{color:var(--text-muted);font-weight:400}
+.detail-item .value{color:var(--text);font-weight:500}
+.quote-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem 2rem;margin-top:2rem;position:relative;font-style:italic;color:var(--text-muted);font-size:0.95rem;line-height:1.7}
+.quote-block::before{content:'';position:absolute;left:0;top:1rem;bottom:1rem;width:3px;background:var(--gradient);border-radius:2px}
+
+.alt-bg{background:var(--bg2)}
+
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem}
+.skill-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;transition:all var(--t);position:relative;overflow:hidden}
+.skill-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:0;transition:opacity 0.3s}
+.skill-card:hover{transform:translateY(-6px);border-color:rgba(0,212,170,0.2);box-shadow:0 20px 48px rgba(0,0,0,0.5)}
+.skill-card:hover::before{opacity:1}
+.skill-card h4{display:flex;align-items:center;gap:0.6rem;font-size:1.05rem;margin-bottom:1.25rem;color:var(--primary);font-weight:600}
+.skill-card ul{list-style:none;display:flex;flex-wrap:wrap;gap:0.5rem}
+.skill-card li{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:0.4rem 0.85rem;font-size:0.82rem;color:var(--text-muted);transition:all var(--t);font-weight:400}
+.skill-card li:hover{background:var(--primary-dim);color:var(--text);border-color:rgba(0,212,170,0.25)}
+.quick-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;margin-top:3rem}
+.fact{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;text-align:center;transition:all var(--t);position:relative;overflow:hidden}
+.fact:hover{border-color:rgba(0,212,170,0.2);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,0.3)}
+.fact .num{font-size:1.75rem;font-weight:800;color:var(--primary);display:block;margin-bottom:0.35rem;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.fact .label{font-size:0.8rem;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:0.05em}
+
+.platform-hero{background:linear-gradient(135deg,rgba(0,212,170,0.06) 0%,rgba(6,182,212,0.06) 100%);border:1px solid rgba(0,212,170,0.1);border-radius:var(--r);padding:2.5rem;margin-bottom:3rem;position:relative;overflow:hidden}
+.platform-hero::before{content:'';position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,rgba(0,212,170,0.08) 0%,transparent 70%);border-radius:50%}
+.platform-hero h3{font-size:1.6rem;margin-bottom:0.75rem;position:relative;font-weight:700}
+.platform-hero p{color:var(--text-muted);max-width:700px;position:relative;line-height:1.75;font-size:0.95rem}
+.platform-meta{display:flex;gap:1.5rem;margin-top:1.75rem;flex-wrap:wrap;position:relative}
+.platform-meta .meta-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:0.4rem 0.8rem;border-radius:10px;font-weight:500}
+.platform-meta .meta-item .dot{width:6px;height:6px;border-radius:50%;background:var(--primary)}
+
+.phase-tabs{display:flex;gap:0.6rem;margin-bottom:2.5rem;flex-wrap:wrap}
+.phase-tab{padding:0.75rem 1.25rem;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text-muted);font-size:0.82rem;cursor:pointer;transition:all var(--t);font-weight:500}
+.phase-tab.active{background:var(--primary-dim);color:var(--primary);border-color:rgba(0,212,170,0.25);box-shadow:0 4px 16px rgba(0,212,170,0.08)}
+.phase-tab:hover:not(.active){border-color:var(--text-muted);color:var(--text)}
+.phase-panel{display:none}
+.phase-panel.active{display:block;animation:fadeUp 0.5s ease}
+.phase-content{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start}
+.phase-info h4{font-size:1.2rem;margin-bottom:1rem;color:var(--primary);font-weight:700}
+.phase-info p{color:var(--text-muted);margin-bottom:1.25rem;line-height:1.75;font-size:0.92rem}
+.phase-info ul{list-style:none;margin-bottom:1rem}
+.phase-info li{color:var(--text-muted);font-size:0.88rem;position:relative;padding-left:1.25rem;margin-bottom:0.6rem;line-height:1.6}
+.phase-info li::before{content:'>';position:absolute;left:0;color:var(--primary);font-weight:700}
+.phase-stack{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:1rem}
+.phase-img{border-radius:var(--r);border:1px solid var(--border);overflow:hidden;background:var(--bg);transition:all var(--t);cursor:pointer}
+.phase-img:hover{border-color:rgba(0,212,170,0.2);transform:scale(1.01);box-shadow:0 12px 32px rgba(0,0,0,0.4)}
+.phase-img img{width:100%;height:auto;display:block}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;margin-top:2rem}
+.gallery-item{border-radius:var(--r);border:1px solid var(--border);overflow:hidden;background:var(--surface);transition:all var(--t);cursor:pointer}
+.gallery-item:hover{transform:translateY(-4px);border-color:rgba(0,212,170,0.2);box-shadow:0 16px 40px rgba(0,0,0,0.4)}
+.gallery-item img{width:100%;height:auto;display:block;transition:transform 0.5s}
+.gallery-item:hover img{transform:scale(1.03)}
+.gallery-item .caption{padding:0.9rem 1.1rem;font-size:0.8rem;color:var(--text-muted);font-weight:500;background:var(--surface);border-top:1px solid var(--border)}
+
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem}
+.project-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all var(--t);display:flex;flex-direction:column}
+.project-card:hover{transform:translateY(-8px);box-shadow:0 24px 56px rgba(0,0,0,0.5);border-color:rgba(0,212,170,0.2)}
+.project-header{padding:1.75rem 1.75rem 0.75rem}
+.project-header .category{font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--primary);font-weight:700;margin-bottom:0.6rem;opacity:0.9}
+.project-header h3{font-size:1.2rem;margin-bottom:0.75rem;font-weight:700}
+.project-header p{color:var(--text-muted);font-size:0.88rem;line-height:1.7}
+.project-tools{padding:0 1.75rem;margin-bottom:1.25rem}
+.project-tools .tools-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:0.6rem;font-weight:700}
+.project-tools .tools-list{display:flex;flex-wrap:wrap;gap:0.4rem}
+.tool-tag{background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text-muted);font-size:0.75rem;padding:0.3rem 0.7rem;border-radius:6px;font-weight:500;transition:all var(--t)}
+.tool-tag.primary{background:var(--primary-dim);border-color:rgba(0,212,170,0.25);color:var(--primary);font-weight:600}
+.tool-tag:hover{background:rgba(0,212,170,0.08);color:var(--text);border-color:rgba(0,212,170,0.3)}
+.project-footer{padding:0 1.75rem 1.75rem;margin-top:auto;display:flex;gap:0.75rem}
+.project-footer a{font-size:0.85rem;font-weight:600;text-decoration:none;color:var(--text);display:inline-flex;align-items:center;gap:0.4rem;transition:all var(--t);position:relative;padding-bottom:2px}
+.project-footer a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--gradient);transition:width 0.3s}
+.project-footer a:hover{color:var(--primary)}
+.project-footer a:hover::after{width:100%}
+
+.code-tabs{display:flex;gap:0.5rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.code-tab{padding:0.6rem 1rem;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text-muted);font-size:0.82rem;cursor:pointer;transition:all var(--t);font-weight:500;font-family:var(--font)}
+.code-tab.active{background:var(--primary-dim);color:var(--primary);border-color:rgba(0,212,170,0.25)}
+.code-tab:hover:not(.active){color:var(--text);border-color:var(--text-muted)}
+.code-panel{display:none}
+.code-panel.active{display:block;animation:fadeUp 0.4s ease}
+.code-block{background:#0c1117;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;font-family:var(--mono);font-size:0.78rem;line-height:1.65;position:relative}
+.code-block:hover{border-color:rgba(0,212,170,0.15)}
+.code-header{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1rem;background:rgba(255,255,255,0.015);border-bottom:1px solid var(--border)}
+.code-dot{width:10px;height:10px;border-radius:50%}.code-dot.red{background:#ff5f56}.code-dot.yellow{background:#ffbd2e}.code-dot.green{background:#27c93f}
+.code-filename{color:var(--text-muted);font-size:0.78rem;margin-left:0.5rem;font-family:var(--font)}
+.code-copy{position:absolute;top:0.75rem;right:1rem;background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:0.3rem 0.6rem;border-radius:6px;font-size:0.7rem;cursor:pointer;transition:all var(--t);font-family:var(--font)}
+.code-copy:hover{border-color:var(--primary);color:var(--primary)}
+.code-copy.copied{color:var(--primary);border-color:var(--primary)}
+.code-body{padding:1.25rem 1.5rem;overflow-x:auto;color:#e2e8f0}
+.code-body pre{white-space:pre}
+.code-body .kw{color:#ff7b72;font-weight:500}.code-body .fn{color:#d2a8ff}.code-body .str{color:#a5d6ff}
+.code-body .num{color:#79c0ff}.code-body .cm{color:#64748b;font-style:italic}.code-body .var{color:#ffa657}
+
+.achievements-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}
+.achievement-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;transition:all var(--t);position:relative;overflow:hidden}
+.achievement-card:hover{transform:translateY(-5px);border-color:rgba(0,212,170,0.2);box-shadow:0 20px 48px rgba(0,0,0,0.5)}
+.achievement-card .badge{display:inline-block;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:0.35rem 0.75rem;border-radius:6px;margin-bottom:0.9rem}
+.badge-cert{background:rgba(0,212,170,0.1);color:var(--primary);border:1px solid rgba(0,212,170,0.2)}
+.badge-event{background:rgba(99,102,241,0.1);color:#818cf8;border:1px solid rgba(99,102,241,0.2)}
+.achievement-card h4{font-size:1.05rem;margin-bottom:0.6rem;font-weight:700}
+.achievement-card p{color:var(--text-muted);font-size:0.88rem;line-height:1.7}
+.achievement-card .meta{color:var(--text-muted);font-size:0.78rem;margin-top:1rem;display:flex;gap:1rem;font-weight:500}
+
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gradient);border-radius:2px;opacity:0.6}
+.timeline-item{position:relative;padding-bottom:2.5rem}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-item::before{content:'';position:absolute;left:calc(-2rem - 5px);top:0.6rem;width:12px;height:12px;background:var(--bg);border:2px solid var(--primary);border-radius:50%;box-shadow:0 0 0 4px rgba(0,212,170,0.1);transition:all var(--t)}
+.timeline-item:hover::before{box-shadow:0 0 0 6px rgba(0,212,170,0.2);border-color:var(--accent)}
+.timeline-item h4{font-size:1.05rem;margin-bottom:0.3rem;font-weight:700}
+.timeline-item .meta{font-size:0.82rem;color:var(--primary);font-weight:600;margin-bottom:0.6rem;display:flex;gap:1rem;flex-wrap:wrap}
+.timeline-item p{color:var(--text-muted);font-size:0.88rem;line-height:1.6}
+.timeline-item ul{margin-top:0.6rem;list-style:none}
+.timeline-item li{color:var(--text-muted);font-size:0.85rem;position:relative;padding-left:1.1rem;margin-bottom:0.35rem}
+.timeline-item li::before{content:'>';position:absolute;left:0;color:var(--primary);font-weight:700}
+
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.contact-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:2rem;display:flex;flex-direction:column;gap:1.5rem;transition:all var(--t)}
+.contact-card:hover{border-color:rgba(0,212,170,0.15)}
+.contact-item{display:flex;align-items:center;gap:1rem}
+.contact-item .icon-box{width:48px;height:48px;border-radius:10px;background:var(--primary-dim);display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:1.1rem;flex-shrink:0;transition:all var(--t);border:1px solid rgba(0,212,170,0.1)}
+.contact-item:hover .icon-box{background:var(--primary);color:var(--bg);box-shadow:0 8px 24px rgba(0,212,170,0.25)}
+.contact-item a{color:var(--text);text-decoration:none;font-weight:600;transition:color var(--t);font-size:0.95rem}
+.contact-item a:hover{color:var(--primary)}
+.contact-item .sub{color:var(--text-muted);font-size:0.82rem;margin-top:0.15rem}
+.contact-form{display:flex;flex-direction:column;gap:1rem}
+.contact-form input,.contact-form textarea{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:1rem;color:var(--text);font-family:var(--font);font-size:0.95rem;transition:all var(--t);outline:none}
+.contact-form input:focus,.contact-form textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,212,170,0.08)}
+.contact-form textarea{min-height:120px;resize:vertical}
+.contact-form button{align-self:flex-start}
+
+.modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.92);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:2rem;opacity:0;transition:opacity 0.3s}
+.modal.active{display:flex;opacity:1}
+.modal img{max-width:100%;max-height:90vh;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 24px 64px rgba(0,0,0,0.6)}
+.modal-close{position:absolute;top:1.5rem;right:1.5rem;width:44px;height:44px;background:var(--surface);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text);cursor:pointer;font-size:1.25rem;transition:all var(--t)}
+.modal-close:hover{background:var(--primary);border-color:var(--primary);color:var(--bg)}
+
+.back-to-top{position:fixed;bottom:2rem;right:2rem;width:48px;height:48px;background:var(--surface);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;transition:all var(--t);opacity:0;transform:translateY(20px);z-index:999}
+.back-to-top.visible{opacity:1;transform:translateY(0)}
+.back-to-top:hover{background:var(--primary);border-color:var(--primary);color:var(--bg);box-shadow:0 8px 24px rgba(0,212,170,0.3)}
+
+footer{text-align:center;padding:3rem 2rem;border-top:1px solid var(--border);color:var(--text-muted);font-size:0.85rem;background:var(--bg)}
+footer span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700}
+
+.reveal{opacity:0;transform:translateY(40px);transition:all 0.8s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}.reveal-delay-2{transition-delay:0.2s}.reveal-delay-3{transition-delay:0.3s}.reveal-delay-4{transition-delay:0.4s}
+
+@media(max-width:768px){
+.nav-links{display:none;position:fixed;inset:0;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:2rem;z-index:999}
+.nav-links.active{display:flex}.nav-links a{font-size:1.2rem}
+.menu-toggle{display:flex;z-index:1001}
+.about-grid{grid-template-columns:1fr;text-align:center}
+.about-photo{max-width:240px}
+.about-details{grid-template-columns:1fr;text-align:left;max-width:320px;margin:0 auto}
+.contact-grid{grid-template-columns:1fr}
+.projects-grid{grid-template-columns:1fr}
+.hero-cta{flex-direction:column;align-items:center}
+.btn{width:100%;max-width:280px;justify-content:center}
+.timeline{padding-left:1.5rem}
+.timeline-item::before{left:calc(-1.5rem - 5px)}
+.phase-content{grid-template-columns:1fr}
+.gallery-grid{grid-template-columns:1fr}
+.code-body{font-size:0.75rem}
+.achievements-grid{grid-template-columns:1fr}
+.platform-meta{justify-content:center}
+.about-info h3{font-size:1.4rem}
+}
+</style>
+</head>
+<body>
+<div class="preloader" id="preloader"><div class="preloader-inner"><div class="preloader-logo">SB</div><div class="preloader-bar"><div class="preloader-fill"></div></div></div></div>
+
+<div class="section-dots" id="sectionDots">
+<div class="section-dot active" data-section="home" data-label="Home"></div>
+<div class="section-dot" data-section="about" data-label="About"></div>
+<div class="section-dot" data-section="skills" data-label="Skills"></div>
+<div class="section-dot" data-section="platform" data-label="Platform"></div>
+<div class="section-dot" data-section="projects" data-label="Projects"></div>
+<div class="section-dot" data-section="code" data-label="Code"></div>
+<div class="section-dot" data-section="achievements" data-label="Achievements"></div>
+<div class="section-dot" data-section="experience" data-label="Experience"></div>
+<div class="section-dot" data-section="contact" data-label="Contact"></div>
+</div>
+
+<nav id="navbar">
+<div class="nav-container">
+<div class="logo"><span>SB</span>.dev</div>
+<ul class="nav-links" id="navLinks">
+<li><a href="#home" class="active">Home</a></li>
+<li><a href="#about">About</a></li>
+<li><a href="#skills">Skills</a></li>
+<li><a href="#platform">Platform</a></li>
+<li><a href="#projects">Projects</a></li>
+<li><a href="#code">Code</a></li>
+<li><a href="#achievements">Achievements</a></li>
+<li><a href="#contact">Contact</a></li>
+</ul>
+<div class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></div>
+</div>
+</nav>
+
+<section class="hero" id="home">
+<canvas id="heroCanvas"></canvas>
+<div class="hero-content">
+<div class="hero-badge"><span class="dot"></span> Open to Work</div>
+<h1>Hi, I'm <span class="gradient-text">Supreeth Bhat</span></h1>
+<p class="hero-tagline" id="heroTagline"></p>
+<div class="hero-cta">
+<a href="#platform" class="btn btn-primary"><span>Explore the Platform</span></a>
+<a href="#contact" class="btn btn-secondary"><span>Get in Touch</span></a>
+</div>
+<div class="hero-social">
+<a href="https://github.com/supreeth0008" target="_blank" aria-label="GitHub"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.37.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.72.08-.72 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.17 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.65.24 2.87.12 3.17.77.84 1.24 1.9 1.24 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg></a>
+<a href="mailto:csbhatt719@gmail.com" aria-label="Email"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
+<a href="tel:+918310007630" aria-label="Phone"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></a>
+</div>
+</div>
+</section>
+
+<section id="about">
+<div class="container">
+<div class="section-header reveal">
+<h2><span class="icon">~</span> About Me</h2>
+<p>Not your typical resume talk. Here is who I actually am.</p>
+<div class="divider"></div>
+</div>
+<div class="about-grid reveal">
+<div class="about-photo">
+<div class="about-photo-glow"></div>
+<div class="about-photo-frame">
+<img src="images/supreeth.png" alt="Supreeth Bhat">
+</div>
+</div>
+<div class="about-info">
+<h3>The guy who shows up and gets it done</h3>
+<p>I am not the loudest person in the room, but I am usually the one making sure the server is running while everyone else is presenting. I grew up in Tumkur, studied at Sree Siddaganga College, and I am currently pursuing my MCA at S-VYASA.</p>
+<p>I like understanding how things work under the hood, whether it is a Terraform module or a crowd of 200 people at a tech event. My approach is simple: read the docs, build something, break it, fix it properly, and document it so the next person does not suffer.</p>
+<div class="about-details">
+<div class="detail-item"><span class="label">Location</span><span class="value">Tumkur, Karnataka</span></div>
+<div class="detail-item"><span class="label">Email</span><span class="value">csbhatt719@gmail.com</span></div>
+<div class="detail-item"><span class="label">Phone</span><span class="value">+91 8310007630</span></div>
+<div class="detail-item"><span class="label">Languages</span><span class="value">Kannada, Hindi, English</span></div>
+<div class="detail-item"><span class="label">Birth</span><span class="value">8 October 2004</span></div>
+<div class="detail-item"><span class="label">Nationality</span><span class="value">Indian</span></div>
+</div>
+<div class="quote-block">I do not chase buzzwords. I chase systems that are reliable, observable, and easy to hand over to the next engineer.</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="skills" class="alt-bg">
+<div class="container">
+<div class="section-header reveal">
+<h2><span class="icon">*</span> Technical Skills</h2>
+<p>Tools I actually use, not just list on a resume.</p>
+<div class="divider"></div>
+</div>
+<div class="skills-grid reveal">
+<div class="skill-card">
+<h4>Cloud Platforms</h4>
+<ul><li>AWS (EC2, ECR, IAM, VPC, S3)</li><li>Civo Cloud (K3s)</li><li>Cloud Networking</li><li>Serverless Architecture</li></ul>
+</div>
+<div class="skill-card">
+<h4>Infrastructure & Automation</h4>
+<ul><li>Terraform</li><li>Docker</li><li>Shell Scripting</li><li>Infrastructure as Code</li><li>Configuration Management</li></ul>
+</div>
+<div class="skill-card">
+<h4>CI/CD & GitOps</h4>
+<ul><li>GitHub Actions</li><li>ArgoCD</li><li>Argo Rollouts</li><li>Git</li><li>Canary Deployments</li></ul>
+</div>
+<div class="skill-card">
+<h4>Kubernetes & Orchestration</h4>
+<ul><li>K3s / Kubernetes</li><li>HPA</li><li>Load Balancing</li><li>Container Orchestration</li></ul>
+</div>
+<div class="skill-card">
+<h4>Observability & Security</h4>
+<ul><li>Prometheus</li><li>Grafana Cloud</li><li>HashiCorp Vault</li><li>OpenTelemetry</li><li>Jaeger</li><li>Trivy</li><li>SonarCloud</li></ul>
+</div>
+<div class="skill-card">
+<h4>Programming & Scripting</h4>
+<ul><li>Python</li><li>JavaScript</li><li>Node.js</li><li>Flask</li><li>Express</li><li>HTML5</li><li>CSS3</li></ul>
+</div>
+</div>
+<div class="quick-facts reveal">
+<div class="fact"><span class="num">4</span><span class="label">DevOps Phases Built</span></div>
+<div class="fact"><span class="num">GitOps</span><span class="label">ArgoCD Deployed</span></div>
+<div class="fact"><span class="num">Tumkur</span><span class="label">Based In</span></div>
+<div class="fact"><span class="num">24/7</span><span class="label">On-Call Mindset</span></div>
+</div>
+</div>
+</section>
+
+<section id="platform">
+<div class="container">
+<div class="section-header reveal">
+<h2><span class="icon">P</span> DevOps Infinity Platform</h2>
+<p>A production-grade platform I built progressively from a basic CI/CD pipeline to a full enterprise-level stack.</p>
+<div class="divider"></div>
+</div>
+<div class="platform-hero reveal">
+<h3>From Flask on EC2 to GitOps on Kubernetes</h3>
+<p>This is not a tutorial project. I built this platform in 4 distinct phases, each adding real production capabilities. It started with a simple Python Flask app and ended with a fully observable, secure, auto-scaling Kubernetes deployment managed by ArgoCD with canary releases, chaos engineering, and HashiCorp Vault.</p>
+<div class="platform-meta">
+<div class="meta-item"><span class="dot"></span> 4 Progressive Phases</div>
+<div class="meta-item"><span class="dot"></span> AWS + Civo Cloud</div>
+<div class="meta-item"><span class="dot"></span> Kubernetes (K3s)</div>
+<div class="meta-item"><span class="dot"></span> ArgoCD + GitOps</div>
+<div class="meta-item"><span class="dot"></span> Vault + Chaos</div>
+</div>
+</div>
+<div class="reveal">
+<div class="phase-tabs">
+<div class="phase-tab active" onclick="showPhase('phase1')">Phase 1 — Foundation</div>
+<div class="phase-tab" onclick="showPhase('phase2')">Phase 2 — Intermediate</div>
+<div class="phase-tab" onclick="showPhase('phase3')">Phase 3 — Advanced</div>
+<div class="phase-tab" onclick="showPhase('phase4')">Phase 4 — FAANG Level</div>
+<div class="phase-tab" onclick="showPhase('live')">Live Screenshots</div>
+</div>
+<div class="phase-panel active" id="phase1">
+<div class="phase-content">
+<div class="phase-info">
+<h4>Phase 1 — Foundation</h4>
+<p>Started with a Python Flask application, containerized it with Docker, provisioned AWS infrastructure using Terraform, and built a CI/CD pipeline with GitHub Actions that builds, scans, pushes, and deploys automatically.</p>
+<ul>
+<li>Flask application with /health endpoint</li>
+<li>Docker containerization with multi-stage builds</li>
+<li>GitHub Actions: build, SonarCloud, Trivy, push to ECR, deploy to EC2</li>
+<li>Terraform: EC2, ECR, IAM roles, Security Groups, VPC</li>
+<li>Region: ap-south-1 (Mumbai)</li>
+</ul>
+<div class="phase-stack">
+<span class="tool-tag primary">Python Flask</span><span class="tool-tag">Docker</span><span class="tool-tag">GitHub Actions</span><span class="tool-tag">Terraform</span><span class="tool-tag">AWS EC2</span><span class="tool-tag">AWS ECR</span><span class="tool-tag">Trivy</span><span class="tool-tag">SonarCloud</span>
+</div>
+</div>
+<div class="phase-img" onclick="openModal('images/phase-1.png')"><img src="images/phase-1.png" alt="Phase 1 Foundation Stack"></div>
+</div>
+</div>
+<div class="phase-panel" id="phase2">
+<div class="phase-content">
+<div class="phase-info">
+<h4>Phase 2 — Intermediate</h4>
+<p>Migrated from EC2 to Kubernetes on Civo K3s. Added Prometheus monitoring with Grafana Cloud dashboards, Horizontal Pod Autoscaling, and load balancing.</p>
+<ul>
+<li>Civo Kubernetes (K3s) cluster deployment</li>
+<li>Prometheus metrics collection with remote write to Grafana Cloud</li>
+<li>HPA scaling 2 to 5 pods at 70% CPU</li>
+<li>Civo Cloud LoadBalancer exposing port 80</li>
+<li>ECR image pull secrets for private registry</li>
+<li>Liveness and readiness probes on /health</li>
+</ul>
+<div class="phase-stack">
+<span class="tool-tag primary">Kubernetes</span><span class="tool-tag">Civo K3s</span><span class="tool-tag">Prometheus</span><span class="tool-tag">Grafana Cloud</span><span class="tool-tag">HPA</span>
+</div>
+</div>
+<div class="phase-img" onclick="openModal('images/phase-2.png')"><img src="images/phase-2.png" alt="Phase 2 Intermediate Stack"></div>
+</div>
+</div>
+<div class="phase-panel" id="phase3">
+<div class="phase-content">
+<div class="phase-info">
+<h4>Phase 3 — Advanced</h4>
+<p>Introduced GitOps with ArgoCD for declarative deployments. Added DevSecOps with SonarCloud and Trivy scanning. Implemented canary deployments using Argo Rollouts.</p>
+<ul>
+<li>ArgoCD v3.4.3 for GitOps deployment management</li>
+<li>SonarCloud code quality gates in CI pipeline</li>
+<li>Trivy container security scanning</li>
+<li>Argo Rollouts v1.9.0 for progressive delivery</li>
+<li>Canary strategy: 20% to 50% to 100% traffic shift</li>
+</ul>
+<div class="phase-stack">
+<span class="tool-tag primary">ArgoCD</span><span class="tool-tag">GitOps</span><span class="tool-tag">Argo Rollouts</span><span class="tool-tag">Canary</span><span class="tool-tag">SonarCloud</span><span class="tool-tag">Trivy</span>
+</div>
+</div>
+<div class="phase-img" onclick="openModal('images/phase-3.png')"><img src="images/phase-3.png" alt="Phase 3 Advanced Stack"></div>
+</div>
+</div>
+<div class="phase-panel" id="phase4">
+<div class="phase-content">
+<div class="phase-info">
+<h4>Phase 4 — FAANG Level</h4>
+<p>Enterprise-grade observability, chaos engineering, and secrets management. Added distributed tracing, chaos experiments, and dynamic secrets with Vault.</p>
+<ul>
+<li>Jaeger all-in-one for distributed request tracing</li>
+<li>OpenTelemetry Collector for vendor-neutral telemetry</li>
+<li>LitmusChaos for chaos experiments (pod kill, network latency)</li>
+<li>HashiCorp Vault v2.0.2 initialized and unsealed</li>
+<li>Dynamic secrets management ready for production</li>
+</ul>
+<div class="phase-stack">
+<span class="tool-tag primary">Jaeger</span><span class="tool-tag">OpenTelemetry</span><span class="tool-tag">LitmusChaos</span><span class="tool-tag">Vault</span><span class="tool-tag">Chaos Engineering</span>
+</div>
+</div>
+<div class="phase-img" onclick="openModal('images/phase-4.png')"><img src="images/phase-4.png" alt="Phase 4 FAANG Level Stack"></div>
+</div>
+</div>
+<div class="phase-panel" id="live">
+<div class="phase-content" style="grid-template-columns:1fr">
+<div class="phase-info">
+<h4>Live Cluster Screenshots</h4>
+<p>These are real screenshots from my running Kubernetes cluster. Not mockups, not tutorials. This is what my DevOps Infinity platform actually looks like in production.</p>
+</div>
+</div>
+<div class="gallery-grid">
+<div class="gallery-item" onclick="openModal('images/k8s-pods-1.png')"><img src="images/k8s-pods-1.png" alt="Kubernetes pods"><div class="caption">Kubernetes pods across all namespaces</div></div>
+<div class="gallery-item" onclick="openModal('images/k8s-pods-2.png')"><img src="images/k8s-pods-2.png" alt="DevOps Infinity pods"><div class="caption">DevOps Infinity pods running in cluster</div></div>
+<div class="gallery-item" onclick="openModal('images/health-checks.png')"><img src="images/health-checks.png" alt="Health checks"><div class="caption">Health checks from both EC2 and K8s</div></div>
+<div class="gallery-item" onclick="openModal('images/argocd-sync.png')"><img src="images/argocd-sync.png" alt="ArgoCD synced"><div class="caption">ArgoCD application synced to HEAD</div></div>
+<div class="gallery-item" onclick="openModal('images/argocd-app.png')"><img src="images/argocd-app.png" alt="ArgoCD app"><div class="caption">ArgoCD application: Healthy + Synced</div></div>
+<div class="gallery-item" onclick="openModal('images/argocd-tree.png')"><img src="images/argocd-tree.png" alt="ArgoCD tree"><div class="caption">ArgoCD resource tree view</div></div>
+<div class="gallery-item" onclick="openModal('images/kubectl-top.png')"><img src="images/kubectl-top.png" alt="kubectl top"><div class="caption">Resource usage: kubectl top nodes and pods</div></div>
+<div class="gallery-item" onclick="openModal('images/argo-rollouts.png')"><img src="images/argo-rollouts.png" alt="Argo Rollouts"><div class="caption">Argo Rollouts: Canary deployment</div></div>
+<div class="gallery-item" onclick="openModal('images/github-actions.png')"><img src="images/github-actions.png" alt="GitHub Actions"><div class="caption">GitHub Actions: Build, Scan, Push, Deploy</div></div>
+<div class="gallery-item" onclick="openModal('images/ec2-health.png')"><img src="images/ec2-health.png" alt="EC2 health"><div class="caption">EC2 health endpoint returning healthy</div></div>
+<div class="gallery-item" onclick="openModal('images/grafana-dashboards.png')"><img src="images/grafana-dashboards.png" alt="Grafana"><div class="caption">Grafana Cloud: Kubernetes monitoring</div></div>
+<div class="gallery-item" onclick="openModal('images/vault-status.png')"><img src="images/vault-status.png" alt="Vault"><div class="caption">HashiCorp Vault: Initialized and unsealed</div></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="projects" class="alt-bg">
+<div class="container">
+<div class="section-header reveal">
+<h2><span class="icon">P</span> Other Projects</h2>
+<p>Additional work and learning projects.</p>
+<div class="divider"></div>
+</div>
+<div class="projects-grid reveal">
+<div class="project-card">
+<div class="project-header">
+<div class="category">DevOps / Cloud</div>
+<h3>Cloud DevOps Roadmap</h3>
+<p>An interactive visual learning roadmap I built for anyone trying to navigate Cloud and DevOps without drowning in documentation.</p>
+</div>
+<div class="project-tools">
+<div class="tools-label">Built with</div>
+<div class="tools-list">
+<span class="tool-tag primary">JavaScript</span><span class="tool-tag">HTML5</span><span class="tool-tag">CSS3</span><span class="tool-tag">Vite</span>
+</div>
+</div>
+<div class="project-footer"><a href="https://github.com/supreeth0008/cloud-devops-roadmap" target="_blank">View on GitHub &rarr;</a></div>
+</div>
+<div class="project-card">
+<div class="project-header">
+<div class="category">Backend / API</div>
+<h3>Webhook Engine</h3>
+<p>A lightweight webhook processing engine I wrote to understand how modern SaaS tools handle event delivery, routing, and retries.</p>
+</div>
+<div class="project-tools">
+<div class="tools-label">Built with</div>
+<div class="tools-list">
+<span class="tool-tag primary">Node.js</span><span class="tool-tag">Express</span><span class="tool-tag">JavaScript</span><span class="tool-tag">Crypto</span>
+</div>
+</div>
+<div class="project-footer"><a href="https://github.com/supreeth0008/supreeth_webhook_engine" target="_blank">View on GitHub &rarr;</a></div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="code">
+<div class="container">
+<div class="section-header reveal">
+<h2><span class="icon">&lt;/&gt;</span> Code Showcase</h2>
+<p>Snippets pulled straight from my actual repositories.</p>
+<div class="divider"></div>
+</div>
+<div class="reveal">
+<div class="code-tabs">
+<div class="code-tab active" onclick="showCode('terraform')">terraform/main.tf</div>
+<div class="code-tab" onclick="showCode('hmac')">utils/hmac.js</div>
+<div class="code-tab" onclick="showCode('flask')">app/app.py</div>
+<div class="code-tab" onclick="showCode('events')">routes/events.js</div>
+</div>
+<div class="code-panel active" id="terraform">
+<div class="code-block">
+<div class="code-header">
+<div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div>
+<span class="code-filename">devops-infinity / terraform / main.tf</span>
+<button class="code-copy" onclick="copyCode(this)">Copy</button>
+</div>
+<div class="code-body"><pre><span class="kw">data</span> <span class="str">"aws_vpc"</span> <span class="str">"default"</span> {
+  <span class="var">default</span> = <span class="kw">true</span>
+}
+
+<span class="kw">resource</span> <span class="str">"aws_security_group"</span> <span class="str">"app"</span> {
+  <span class="var">name</span>        = <span class="str">"${var.app_name}-sg"</span>
+  <span class="var">description</span> = <span class="str">"Security group for ${var.app_name}"</span>
+  <span class="var">vpc_id</span>      = <span class="var">data.aws_vpc.default.id</span>
+
+  <span class="var">ingress</span> {
+    <span class="var">description</span> = <span class="str">"HTTP"</span>
+    <span class="var">from_port</span>   = <span class="num">80</span>
+    <span class="var">to_port</span>     = <span class="num">80</span>
+    <span class="var">protocol</span>    = <span class="str">"tcp"</span>
+    <span class="var">cidr_blocks</span> = [<span class="str">"0.0.0.0/0"</span>]
+  }
+
+  <span class="var">ingress</span> {
+    <span class="var">description</span> = <span class="str">"Application port"</span>
+    <span class="var">from_port</span>   = <span class="num">5000</span>
+    <span class="var">to_port</span>     = <span class="num">5000</span>
+    <span class="var">protocol</span>    = <span class="str">"tcp"</span>
+    <span class="var">cidr_blocks</span> = [<span class="str">"0.0.0.0/0"</span>]
+  }
+
+  <span class="var">egress</span> {
+    <span class="var">from_port</span>   = <span class="num">0</span>
+    <span class="var">to_port</span>     = <span class="num">0</span>
+    <span class="var">protocol</span>    = <span class="str">"-1"</span>
+    <span class="var">cidr_blocks</span> = [<span class="str">"0.0.0.0/0"</span>]
+  }
+
+  <span class="var">tags</span> = {
+    <span class="var">Name</span>        = <span class="str">"${var.app_name}-sg"</span>
+    <span class="var">Environment</span> = <span class="var">var.environment</span>
+  }
+}
+
+<span class="kw">resource</span> <span class="str">"aws_ecr_repository"</span> <span class="str">"app"</span> {
+  <span class="var">name</span>                 = <span class="var">var.app_name</span>
+  <span class="var">image_tag_mutability</span> = <span class="str">"MUTABLE"</span>
+
+  <span class="var">image_scanning_configuration</span> {
+    <span class="var">scan_on_push</span> = <span class="kw">true</span>
+  }
+}</pre></div>
+</div>
+</div>
+<div class="code-panel" id="hmac">
+<div class="code-block">
+<div class="code-header">
+<div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div>
+<span class="code-filename">webhook-engine / src / utils / hmac.js</span>
+<button class="code-copy" onclick="copyCode(this)">Copy</button>
+</div>
+<div class="code-body"><pre><span class="str">'use strict'</span>;
+
+<span class="kw">const</span> <span class="var">crypto</span> = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+<span class="kw">const</span> <span class="var">SIGNING_KEY</span> = <span class="var">process.env.WEBHOOK_SECRET</span> || <span class="str">'fallback_dev_secret'</span>;
+
+<span class="cm">/**
+ * Signs a payload string using HMAC-SHA256.
+ */</span>
+<span class="kw">function</span> <span class="fn">signPayload</span>(<span class="var">payload</span>) {
+  <span class="kw">return</span> <span class="var">crypto</span>
+    .<span class="fn">createHmac</span>(<span class="str">'sha256'</span>, <span class="var">SIGNING_KEY</span>)
+    .<span class="fn">update</span>(<span class="var">payload</span>)
+    .<span class="fn">digest</span>(<span class="str">'hex'</span>);
+}
+
+<span class="cm">/**
+ * Verifies a signature using timingSafeEqual.
+ */</span>
+<span class="kw">function</span> <span class="fn">verifySignature</span>(<span class="var">payload</span>, <span class="var">signature</span>) {
+  <span class="kw">const</span> <span class="var">expected</span> = <span class="fn">signPayload</span>(<span class="var">payload</span>);
+  <span class="kw">try</span> {
+    <span class="kw">return</span> <span class="var">crypto</span>.<span class="fn">timingSafeEqual</span>(
+      <span class="var">Buffer</span>.<span class="fn">from</span>(<span class="var">expected</span>, <span class="str">'hex'</span>),
+      <span class="var">Buffer</span>.<span class="fn">from</span>(<span class="var">signature</span>, <span class="str">'hex'</span>)
+    );
+  } <span class="kw">catch</span> {
+    <span class="kw">return</span> <span class="kw">false</span>;
+  }
+}
+
+<span class="var">module</span>.<span class="var">exports</span> = { <span class="var">signPayload</span>, <span class="var">verifySignature</span> };</pre></div>
+</div>
+</div>
+<div class="code-panel" id="flask">
+<div class="code-block">
+<div class="code-header">
+<div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div>
+<span class="code-filename">devops-infinity / app / app.py</span>
+<button class="code-copy" onclick="copyCode(this)">Copy</button>
+</div>
+<div class="code-body"><pre><span class="kw">from</span> flask <span class="kw">import</span> Flask, render_template, request, abort
+<span class="kw">import</span> os
+<span class="kw">import</span> socket
+
+<span class="var">app</span> = Flask(<span class="var">__name__</span>)
+
+<span class="var">ALLOWED_HOSTS</span> = os.<span class="fn">environ</span>.<span class="fn">get</span>(<span class="str">'ALLOWED_HOSTS'</span>, <span class="str">''</span>).<span class="fn">split</span>(<span class="str">','</span>)
+
+<span class="cm"># Health check endpoint for load balancers</span>
+<span class="var">@app.route</span>(<span class="str">'/health'</span>)
+<span class="kw">def</span> <span class="fn">health</span>():
+    <span class="kw">return</span> {
+        <span class="str">'status'</span>: <span class="str">'healthy'</span>,
+        <span class="str">'version'</span>: os.<span class="fn">environ</span>.<span class="fn">get</span>(<span class="str">'APP_VERSION'</span>, <span class="str">'1.0.0'</span>)
+    }, <span class="num">200</span>
+
+<span class="var">@app.route</span>(<span class="str">'/'</span>)
+<span class="kw">def</span> <span class="fn">home</span>():
+    <span class="kw">return</span> <span class="fn">render_template</span>(
+        <span class="str">'index.html'</span>,
+        <span class="var">hostname</span>=socket.<span class="fn">gethostname</span>(),
+        <span class="var">version</span>=os.<span class="fn">environ</span>.<span class="fn">get</span>(<span class="str">'APP_VERSION'</span>, <span class="str">'1.0.0'</span>)
+    )
+
+<span class="kw">if</span> <span class="var">__name__</span> == <span class="str">'__main__'</span>:
+    <span class="var">host</span> = os.<span class="fn">environ</span>.<span class="fn">get</span>(<span class="str">'FLASK_HOST'</span>, <span class="str">'0.0.0.0'</span>)
+    <span class="var">port</span> = <span class="fn">int</span>(os.<span class="fn">environ</span>.<span class="fn">get</span>(<span class="str">'FLASK_PORT'</span>, <span class="num">5000</span>))
+    <span class="var">app</span>.<span class="fn">run</span>(<span class="var">host</span>=<span class="var">host</span>, <span class="var">port</span>=<span class="var">port</span>)</pre></div>
+</div>
+</div>
+<div class="code-panel" id="events">
+<div class="code-block">
+<div class="code-header">
+<div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div>
+<span class="code-filename">webhook-engine / src / routes / events.js</span>
+<button class="code-copy" onclick="copyCode(this)">Copy</button>
+</div>
+<div class="code-body"><pre><span class="kw">const</span> <span class="var">express</span> = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> { <span class="var">v4</span>: <span class="var">uuidv4</span> } = <span class="fn">require</span>(<span class="str">'uuid'</span>);
+<span class="kw">const</span> { <span class="fn">createEvent</span>, <span class="fn">deliverEvent</span> } = <span class="fn">require</span>(<span class="str">'../db/store'</span>);
+
+<span class="kw">const</span> <span class="var">router</span> = express.<span class="fn">Router</span>();
+
+<span class="cm">// POST /events — Accepts a new event and queues it for delivery</span>
+<span class="var">router</span>.<span class="fn">post</span>(<span class="str">'/'</span>, <span class="kw">async</span> (<span class="var">req</span>, <span class="var">res</span>) => {
+  <span class="kw">const</span> { <span class="var">type</span>, <span class="var">payload</span>, <span class="var">webhook_url</span> } = <span class="var">req</span>.<span class="var">body</span>;
+
+  <span class="kw">if</span> (!<span class="var">type</span> || <span class="kw">typeof</span> <span class="var">type</span> !== <span class="str">'string'</span>) {
+    <span class="kw">return</span> <span class="var">res</span>.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ <span class="var">error</span>: <span class="str">'type is required'</span> });
+  }
+  <span class="kw">if</span> (!<span class="var">webhook_url</span>) {
+    <span class="kw">return</span> <span class="var">res</span>.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ <span class="var">error</span>: <span class="str">'webhook_url is required'</span> });
+  }
+
+  <span class="kw">try</span> {
+    <span class="kw">new</span> <span class="fn">URL</span>(<span class="var">webhook_url</span>);
+  } <span class="kw">catch</span> {
+    <span class="kw">return</span> <span class="var">res</span>.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ <span class="var">error</span>: <span class="str">'invalid URL'</span> });
+  }
+
+  <span class="kw">const</span> <span class="var">event</span> = <span class="fn">createEvent</span>({
+    <span class="var">id</span>: <span class="fn">uuidv4</span>(),
+    <span class="var">type</span>, <span class="var">payload</span>, <span class="var">webhook_url</span>,
+    <span class="var">status</span>: <span class="str">'pending'</span>,
+    <span class="var">created_at</span>: <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toISOString</span>(),
+  });
+
+  <span class="cm">// Fire and forget — delivery runs in background</span>
+  <span class="fn">setImmediate</span>(() => <span class="fn">deliverEvent</span>(<span class="var">event</span>));
+  <span class="kw">return</span> <span class="var">res</span>.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>(<span class="var">event</span>);
+});
+
+<span class="var">module</span>.<span class="var">exports</span> = <span class="var">router</span>;</pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="achievements" class="alt-bg">
+<div class="container">
+<div class="section-header reveal">
+<h2><span class="icon">A</span> Achievements & Certifications</h2>
+<p>Workshops I attended, events I ran, and things I actually earned.</p>
+<div class="divider"></div>
+</div>
+<div class="achievements-grid reveal">
+<div class="achievement-card">
+<div class="badge badge-cert">Workshop</div>
+<h4>5-Day IoT Workshop</h4>
+<p>Completed an intensive hands-on IoT workshop covering sensor interfacing, embedded programming, wireless communication protocols, and cloud integration for IoT devices.</p>
+<div class="meta"><span>Certificate Earned</span><span>Completed</span></div>
+</div>
+<div class="achievement-card">
+<div class="badge badge-event">Hackathon</div>
+<h4>IoT Hackathon — Participant</h4>
+<p>Participated in a competitive IoT hackathon where I built and demonstrated a working IoT prototype within the given time constraints. Earned a participation certificate.</p>
+<div class="meta"><span>Certificate Earned</span><span>Competitive Event</span></div>
+</div>
+<div class="achievement-card">
+<div class="badge badge-event">Event Operations</div>
+<h4>Tech Heist — Operations Lead</h4>
+<p>Managed end-to-end operations for a multi-stage tech competition with 5 elimination-based rounds. Handled participant coordination, crowd management, technical setups, and logistics.</p>
+<div class="meta"><span>People Management</span><span>2025</span></div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="experience">
+<div class="container">
+<div class="section-header reveal">
+<h2><span class="icon">E</span> Experience & Education</h2>
+<p>Where I studied and what I have done.</p>
+<div class="divider"></div>
+</div>
+<div class="about-grid reveal" style="grid-template-columns:1fr 1fr;gap:3rem">
+<div>
+<h3 style="margin-bottom:1.5rem;font-size:1.25rem">Work Experience</h3>
+<div class="timeline">
+<div class="timeline-item">
+<h4>Event Operations & People Management</h4>
+<div class="meta">Tech Heist &bull; 2025 &bull; Tumkur</div>
+<ul>
+<li>Managed end-to-end operations for a multi-stage tech competition with 5 elimination-based rounds</li>
+<li>Handled participant coordination, crowd management, and stage transitions across all event phases</li>
+<li>Ensured smooth execution of technical setups, judging logistics, and time-bound round management</li>
+<li>Maintained communication between participants, judges, and volunteers for seamless event flow</li>
+</ul>
+</div>
+</div>
+</div>
+<div>
+<h3 style="margin-bottom:1.5rem;font-size:1.25rem">Education</h3>
+<div class="timeline">
+<div class="timeline-item">
+<h4>Master of Computer Applications (MCA)</h4>
+<div class="meta">S-VYASA University, Bengaluru &bull; 2025 &ndash; 2027</div>
+<p>Pursuing advanced studies in software engineering, systems architecture, and cloud computing.</p>
+</div>
+<div class="timeline-item">
+<h4>Bachelor of Science (BSc)</h4>
+<div class="meta">Sree Siddaganga College, Tumkur &bull; 2022 &ndash; 2025 &bull; CGPA: 8.2</div>
+<p>Strong foundation in computer science, mathematics, and analytical thinking.</p>
+</div>
+<div class="timeline-item">
+<h4>Pre-University College (PUC) &mdash; PCMC</h4>
+<div class="meta">Karnataka State Board &bull; 2020 &ndash; 2022 &bull; 56.66%</div>
+<p>Physics, Chemistry, Mathematics, Computer Science stream.</p>
+</div>
+<div class="timeline-item">
+<h4>Secondary School (SSLC)</h4>
+<div class="meta">Karnataka State Board &bull; 2019 &ndash; 2020 &bull; 82.56%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="contact" class="alt-bg">
+<div class="container">
+<div class="section-header reveal">
+<h2><span class="icon">C</span> Let's Connect</h2>
+<p>I reply faster than your average CI/CD pipeline. No vague recruiters please.</p>
+<div class="divider"></div>
+</div>
+<div class="contact-grid reveal">
+<div class="contact-card">
+<div class="contact-item">
+<div class="icon-box">@</div>
+<div><a href="mailto:csbhatt719@gmail.com">csbhatt719@gmail.com</a><div class="sub">Best way to reach me</div></div>
+</div>
+<div class="contact-item">
+<div class="icon-box">P</div>
+<div><a href="tel:+918310007630">+91 8310007630</a><div class="sub">Available during business hours</div></div>
+</div>
+<div class="contact-item">
+<div class="icon-box">L</div>
+<div><span>Tumkur, Karnataka, India</span><div class="sub">Open to remote and relocation</div></div>
+</div>
+<div class="contact-item">
+<div class="icon-box">G</div>
+<div><a href="https://github.com/supreeth0008" target="_blank">github.com/supreeth0008</a><div class="sub">Where the real work lives</div></div>
+</div>
+</div>
+<div class="contact-card">
+<form class="contact-form" onsubmit="event.preventDefault(); alert('Thanks for reaching out. Email me directly at csbhatt719@gmail.com for a faster response.');">
+<input type="text" placeholder="Your Name" required>
+<input type="email" placeholder="Your Email" required>
+<input type="text" placeholder="Subject">
+<textarea placeholder="Your Message..." required></textarea>
+<button type="submit" class="btn btn-primary"><span>Send Message</span></button>
+</form>
+</div>
+</div>
+</div>
+</section>
+
+<footer>
+<p>Built with stubbornness and caffeine by <span>Supreeth Bhat</span> &bull; 2026</p>
+</footer>
+
+<div class="modal" id="imgModal" onclick="closeModal()">
+<div class="modal-close" onclick="closeModal()">&times;</div>
+<img src="" alt="Full size" id="modalImg">
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 19V5m-7 7l7-7 7 7"/></svg>
+</button>
+
+<script>
+/* Preloader */
+window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('preloader').classList.add('hidden')},1200)});
+
+/* Hero Canvas Particle Mesh */
+(function(){
+const canvas=document.getElementById('heroCanvas'),ctx=canvas.getContext('2d');
+let w,h,p=[],mouse={x:null,y:null};
+function resize(){w=canvas.width=canvas.parentElement.offsetWidth;h=canvas.height=canvas.parentElement.offsetHeight}
+resize();window.addEventListener('resize',resize);
+for(let i=0;i<60;i++)p.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-0.5)*0.4,vy:(Math.random()-0.5)*0.4,r:Math.random()*2+1});
+window.addEventListener('mousemove',e=>{const r=canvas.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top});
+window.addEventListener('mouseleave',()=>{mouse.x=null;mouse.y=null});
+function draw(){
+ctx.clearRect(0,0,w,h);
+for(let i=0;i<p.length;i++){
+let pt=p[i];pt.x+=pt.vx;pt.y+=pt.vy;
+if(pt.x<0||pt.x>w)pt.vx*=-1;if(pt.y<0||pt.y>h)pt.vy*=-1;
+ctx.beginPath();ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);ctx.fillStyle='rgba(0,212,170,0.3)';ctx.fill();
+for(let j=i+1;j<p.length;j++){
+let dx=pt.x-p[j].x,dy=pt.y-p[j].y,d=Math.sqrt(dx*dx+dy*dy);
+if(d<120){ctx.beginPath();ctx.moveTo(pt.x,pt.y);ctx.lineTo(p[j].x,p[j].y);ctx.strokeStyle='rgba(0,212,170,'+(0.15*(1-d/120))+')';ctx.lineWidth=0.5;ctx.stroke()}
+}
+if(mouse.x!==null){let dx=pt.x-mouse.x,dy=pt.y-mouse.y,d=Math.sqrt(dx*dx+dy*dy);if(d<180){ctx.beginPath();ctx.moveTo(pt.x,pt.y);ctx.lineTo(mouse.x,mouse.y);ctx.strokeStyle='rgba(0,212,170,'+(0.2*(1-d/180))+')';ctx.lineWidth=0.5;ctx.stroke()}}
+}
+requestAnimationFrame(draw);
+}
+draw();
+})();
+
+/* Hero Typing Effect */
+const taglineEl=document.getElementById('heroTagline');
+const taglineText="I am the kind of person who learns by breaking things and then fixing them better. Cloud & DevOps engineer from Tumkur who builds infrastructure that doesn't break at 2 AM.";
+let ti=0;
+function typeHero(){if(ti<taglineText.length){taglineEl.innerHTML=taglineText.substring(0,ti+1)+'<span class="typing-cursor"></span>';ti++;setTimeout(typeHero,25)}else{taglineEl.innerHTML=taglineText+'<span class="typing-cursor"></span>'}}
+setTimeout(typeHero,600);
+
+/* Navigation */
+const navbar=document.getElementById('navbar'),menuToggle=document.getElementById('menuToggle'),navLinks=document.getElementById('navLinks');
+menuToggle.addEventListener('click',()=>{menuToggle.classList.toggle('active');navLinks.classList.toggle('active')});
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>{menuToggle.classList.remove('active');navLinks.classList.remove('active')}));
+window.addEventListener('scroll',()=>{navbar.classList.toggle('scrolled',window.scrollY>50)});
+
+/* Section Dots & Active State */
+const sections=['home','about','skills','platform','projects','code','achievements','experience','contact'];
+const dots=document.querySelectorAll('.section-dot');
+dots.forEach(d=>d.addEventListener('click',()=>{document.getElementById(d.dataset.section).scrollIntoView({behavior:'smooth'})}));
+
+/* Back to Top */
+const btt=document.getElementById('backToTop');
+window.addEventListener('scroll',()=>{btt.classList.toggle('visible',window.scrollY>600)});
+
+/* Reveal Animations */
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');const c=e.target.querySelectorAll('.reveal-delay-1,.reveal-delay-2,.reveal-delay-3,.reveal-delay-4');c.forEach((el,i)=>{el.style.transitionDelay=(0.1*(i+1))+'s';el.classList.add('visible')})}})},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+/* Active Section & Dots */
+window.addEventListener('scroll',()=>{
+let current='';sections.forEach(id=>{if(window.scrollY>=document.getElementById(id).offsetTop-120)current=id});
+document.querySelectorAll('.nav-links a').forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+current)});
+dots.forEach(d=>{d.classList.toggle('active',d.dataset.section===current)});
+});
+
+/* Phase Tabs */
+function showPhase(id){
+document.querySelectorAll('.phase-tab').forEach(t=>t.classList.remove('active'));
+document.querySelectorAll('.phase-panel').forEach(p=>p.classList.remove('active'));
+document.querySelector('.phase-tab[onclick="showPhase(''+id+'')"]').classList.add('active');
+document.getElementById(id).classList.add('active');
+}
+
+/* Code Tabs */
+function showCode(id){
+document.querySelectorAll('.code-tab').forEach(t=>t.classList.remove('active'));
+document.querySelectorAll('.code-panel').forEach(p=>p.classList.remove('active'));
+document.querySelector('.code-tab[onclick="showCode(''+id+'')"]').classList.add('active');
+document.getElementById(id).classList.add('active');
+}
+
+/* Code Copy */
+function copyCode(btn){
+const panel=btn.closest('.code-panel');
+const text=panel.querySelector('.code-body').innerText;
+navigator.clipboard.writeText(text).then(()=>{btn.textContent='Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied')},2000)});
+}
+
+/* Modal */
+function openModal(src){event.stopPropagation();document.getElementById('modalImg').src=src;document.getElementById('imgModal').classList.add('active');document.body.style.overflow='hidden'}
+function closeModal(){document.getElementById('imgModal').classList.remove('active');document.body.style.overflow=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+/* Smooth anchor scroll */
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',function(e){e.preventDefault();document.querySelector(this.getAttribute('href')).scrollIntoView({behavior:'smooth'})}));
+</script>
+</body>
 </html>
